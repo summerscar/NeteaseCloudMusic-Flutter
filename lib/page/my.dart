@@ -3,8 +3,8 @@ import 'package:dio/dio.dart';
 import 'package:assets_audio_player/assets_audio_player.dart';
 // import 'dart:developer';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-class PageMy extends StatelessWidget {
 
+class PageMy extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -47,11 +47,12 @@ class _MusicList extends StatefulWidget {
 class _MusicListState extends State<_MusicList> {
   List list = [];
 
-void getHttp() async {
+  void getHttp() async {
     print('clicked');
     EasyLoading.show();
     try {
-      Response response = await Dio().get("https://music.api.summerscar.me/top/song?type=8");
+      Response response =
+          await Dio().get("https://music.api.summerscar.me/top/song?type=8");
       print('get response');
       setState(() {
         list = response.data['data'];
@@ -61,9 +62,7 @@ void getHttp() async {
         context,
         MaterialPageRoute(
           builder: (context) {
-            return TipRoute(
-              list: list
-            );
+            return TipRoute(list: list);
           },
         ),
       );
@@ -71,6 +70,7 @@ void getHttp() async {
       print(e);
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return RaisedButton(
@@ -84,19 +84,26 @@ class _BuildMusicList extends StatelessWidget {
   final List<dynamic> items;
   final Function onClick;
 
-  _BuildMusicList({Key key, @required this.items, this.onClick}) : super(key: key);
-
+  _BuildMusicList({Key key, @required this.items, this.onClick})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
+    return ListView.separated(
       itemCount: items.length,
-      itemExtent: 50,
       itemBuilder: (BuildContext context, int index) {
         return GestureDetector(
-          child: ListTile(title: Text(items[index]['name'])),
+          child: ListTile(
+            title: Text(items[index]['name']),
+            subtitle: Text(items[index]['artists']
+                .map((artist) => artist['name'])
+                .join(' / ')),
+          ),
           onTap: () => onClick(items[index]['id']),
         );
+      },
+      separatorBuilder: (BuildContext context, int index) {
+        return Divider(color: Colors.grey);
       },
     );
   }
@@ -105,23 +112,23 @@ class _BuildMusicList extends StatelessWidget {
 class TipRoute extends StatelessWidget {
   TipRoute({
     Key key,
-    @required this.list,  // 接收一个text参数
+    @required this.list, // 接收一个text参数
   }) : super(key: key);
 
   final List list;
   final assetsAudioPlayer = AssetsAudioPlayer();
 
-  void _clickHandler (id) async {
+  void _clickHandler(id) async {
     print('click $id');
     try {
-        if (assetsAudioPlayer.isPlaying.value) {
-          assetsAudioPlayer.stop();
-        }
-        await assetsAudioPlayer.open(
-            Audio.network('https://music.163.com/song/media/outer/url?id=$id.mp3'),
-        );
+      if (assetsAudioPlayer.isPlaying.value) {
+        assetsAudioPlayer.stop();
+      }
+      await assetsAudioPlayer.open(
+        Audio.network('https://music.163.com/song/media/outer/url?id=$id.mp3'),
+      );
     } catch (t) {
-        print(t);
+      print(t);
     }
   }
 
@@ -133,11 +140,10 @@ class TipRoute extends StatelessWidget {
         return true;
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: Text("音乐列表"),
-        ),
-        body: _BuildMusicList(items: list, onClick: _clickHandler)
-      ),
+          appBar: AppBar(
+            title: Text("音乐列表"),
+          ),
+          body: _BuildMusicList(items: list, onClick: _clickHandler)),
     );
   }
 }
