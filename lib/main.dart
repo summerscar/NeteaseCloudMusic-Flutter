@@ -6,6 +6,8 @@
 // the help of [PageStorageKey].
 
 import 'package:flutter/material.dart';
+import 'package:fluuter_demo/page/my.dart';
+import 'package:fluuter_demo/components/drawer.dart';
 
 void main() => runApp(MyApp());
 
@@ -27,7 +29,7 @@ class MyHomePage extends StatelessWidget {
     return DefaultTabController(
         length: tabs.length,
         child: Scaffold(
-          drawer: _Drawer(),
+          drawer: ComponentDrawer(),
           appBar: AppBar(
             title: Text('music'),
             centerTitle: false,
@@ -38,64 +40,12 @@ class MyHomePage extends StatelessWidget {
           ),
           body: TabBarView(
             children: [
-              Center(
-                child: Text('我的'),
-              ),
+              PageMy(),
               Center(
                 child: Text('发现'),
               ),
             ],
           ),
         ));
-  }
-}
-
-class _Drawer extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: <Widget>[
-          DrawerHeader(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CircleAvatar(
-                  radius: 35,
-                  backgroundImage: AssetImage('assets/images/avatar.jpg'),
-                ),
-                SizedBox(height: 20),
-                Text(
-                  'username',
-                  style: TextStyle(
-                    color: Colors.white
-                  )
-                )
-              ],
-            ),
-            decoration: BoxDecoration(
-              color: Theme.of(context).primaryColor
-            ),
-          ),
-          ListTile(
-            title: Text('Item 1'),
-            onTap: () {
-              // Update the state of the app.
-              // ...
-              Navigator.pop(context);
-            },
-          ),
-          ListTile(
-            title: Text('Item 2'),
-            onTap: () {
-              // Update the state of the app.
-              // ...
-              Navigator.pop(context);
-            },
-          ),
-        ],
-      ),
-    );
   }
 }
