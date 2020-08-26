@@ -34,8 +34,29 @@ class MyHomePage extends StatelessWidget {
         child: Scaffold(
           drawer: ComponentDrawer(),
           appBar: AppBar(
-            title: Text('music'),
-            centerTitle: false,
+            title: TextField(
+              style: TextStyle(color: Colors.white),
+              cursorColor: Colors.white,
+              decoration: InputDecoration(
+                hintText: "Search",
+                hintStyle: TextStyle(
+                  color: Colors.white70
+                ),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white10),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white70),
+                ),
+                border: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white10),
+                ),
+                prefixIcon: Icon(
+                  Icons.search,
+                  color: Colors.white70,
+                ),
+              ),
+            ),
             bottom: TabBar(
               isScrollable: true,
               tabs: [Tab(text: '我的'), Tab(text: '发现')],
