@@ -3,8 +3,8 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-
+import 'package:dio/dio.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage();
@@ -20,16 +20,16 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('登录'),
+      appBar: AppBar(
+        title: Text('登录'),
+      ),
+      body: SafeArea(
+        child: _MainView(
+          usernameController: _usernameController,
+          passwordController: _passwordController,
         ),
-        body: SafeArea(
-          child: _MainView(
-            usernameController: _usernameController,
-            passwordController: _passwordController,
-          ),
-        ),
-      );
+      ),
+    );
   }
 
   @override
@@ -50,8 +50,47 @@ class _MainView extends StatelessWidget {
   final TextEditingController usernameController;
   final TextEditingController passwordController;
 
-  void _login(BuildContext context) {
-    Navigator.of(context).pushNamed('/');
+  void _login(BuildContext context) async {
+    String url = 'https://music.api.summerscar.me';
+    if (usernameController.text.contains('@')) {
+      url +=
+          '/login?email=${usernameController.text.trim()}&password=${passwordController.text.trim()}';
+    } else if (usernameController.text.contains(RegExp(r'^1[3-9]\d{9}$'))) {
+      url +=
+          '/login/cellphone?phone=${usernameController.text.trim()}&password=${passwordController.text.trim()}';
+    } else {
+      print('username input error');
+      Fluttertoast.showToast(
+          msg: "用户名/手机格式有误",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Theme.of(context).primaryColor,
+          textColor: Colors.white,
+          webPosition: 'center',
+          fontSize: 14.0);
+      return;
+    }
+
+    try {
+      Response response = await Dio().get(url);
+      if (response.data['code'] == 200) {
+        Navigator.of(context).pushNamed('/');
+      } else {
+        Fluttertoast.showToast(
+            msg: response.data['msg'],
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Theme.of(context).primaryColor,
+            textColor: Colors.white,
+            webPosition: 'center',
+            fontSize: 14.0);
+        print(response.data);
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
@@ -131,7 +170,7 @@ class _UsernameInput extends StatelessWidget {
         child: TextField(
           controller: usernameController,
           decoration: InputDecoration(
-            labelText: 'username',
+            labelText: '用户名/手机',
           ),
         ),
       ),
@@ -158,69 +197,9 @@ class _PasswordInput extends StatelessWidget {
         child: TextField(
           controller: passwordController,
           decoration: InputDecoration(
-            labelText: 'password',
+            labelText: '密码',
           ),
           obscureText: true,
-        ),
-      ),
-    );
-  }
-}
-
-class _ThumbButton extends StatefulWidget {
-  _ThumbButton({
-    @required this.onTap,
-  });
-
-  final VoidCallback onTap;
-
-  @override
-  _ThumbButtonState createState() => _ThumbButtonState();
-}
-
-class _ThumbButtonState extends State<_ThumbButton> {
-  BoxDecoration borderDecoration;
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      button: true,
-      enabled: true,
-      label: 'Login',
-      child: GestureDetector(
-        onTap: widget.onTap,
-        child: Focus(
-          onKey: (node, event) {
-            if (event is RawKeyDownEvent) {
-              if (event.logicalKey == LogicalKeyboardKey.enter ||
-                  event.logicalKey == LogicalKeyboardKey.space) {
-                widget.onTap();
-                return true;
-              }
-            }
-            return false;
-          },
-          onFocusChange: (hasFocus) {
-            if (hasFocus) {
-              setState(() {
-                borderDecoration = BoxDecoration(
-                  border: Border.all(
-                    color: Colors.white.withOpacity(0.5),
-                    width: 2,
-                  ),
-                );
-              });
-            } else {
-              setState(() {
-                borderDecoration = null;
-              });
-            }
-          },
-          child: Container(
-            decoration: borderDecoration,
-            height: 120,
-            child: Text('thumb.png')
-          ),
         ),
       ),
     );
