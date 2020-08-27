@@ -30,6 +30,12 @@ class PageMy extends StatelessWidget {
                 ]),
           ),
           _MusicList(),
+          RaisedButton(
+            child: Text('登录'),
+            onPressed: () => {
+              Navigator.pushNamed(context, "login")
+            }
+          ),
           Image.asset('assets/images/avatar.jpg'),
           Image.asset('assets/images/avatar.jpg'),
           Image.asset('assets/images/avatar.jpg')
@@ -62,7 +68,7 @@ class _MusicListState extends State<_MusicList> {
         context,
         MaterialPageRoute(
           builder: (context) {
-            return TipRoute(list: list);
+            return MusicPage(list: list, title: '最新歌曲',);
           },
         ),
       );
@@ -109,13 +115,15 @@ class _BuildMusicList extends StatelessWidget {
   }
 }
 
-class TipRoute extends StatelessWidget {
-  TipRoute({
+class MusicPage extends StatelessWidget {
+  MusicPage({
     Key key,
+    this.title = '音乐列表',
     @required this.list, // 接收一个text参数
   }) : super(key: key);
 
   final List list;
+  final String title;
   final assetsAudioPlayer = AssetsAudioPlayer();
 
   void _clickHandler(id) async {
@@ -141,7 +149,7 @@ class TipRoute extends StatelessWidget {
       },
       child: Scaffold(
           appBar: AppBar(
-            title: Text("音乐列表"),
+            title: Text(title),
           ),
           body: _BuildMusicList(items: list, onClick: _clickHandler)),
     );

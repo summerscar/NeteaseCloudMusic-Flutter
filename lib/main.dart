@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:fluuter_demo/page/my.dart';
 import 'package:fluuter_demo/components/drawer.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:fluuter_demo/page/login.dart';
 
 void main() => runApp(MyApp());
 
@@ -16,10 +17,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(primarySwatch: Colors.red),
-      home: FlutterEasyLoading(
-        child: MyHomePage(),
-      )
+      routes: {
+        "login": (context) => FlutterEasyLoading(child: LoginPage()),
+        "/":(context) => FlutterEasyLoading(
+          child: MyHomePage(),
+        )
+      },
+      initialRoute: '/',
+      theme: ThemeData(primarySwatch: Colors.red)
     );
   }
 }
