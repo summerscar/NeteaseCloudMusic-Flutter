@@ -5,17 +5,45 @@
 // list, whose position is preserved when switching between the tabs thanks to
 // the help of [PageStorageKey].
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:fluuter_demo/page/my.dart';
 import 'package:fluuter_demo/components/drawer.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:fluuter_demo/page/login.dart';
+import 'package:provider/provider.dart';
+import './state/state.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  EasyLoading.instance
+  ..displayDuration = const Duration(milliseconds: 2000)
+  ..indicatorType = EasyLoadingIndicatorType.ring
+  ..loadingStyle = EasyLoadingStyle.dark
+  ..indicatorSize = 45.0;
+
+  runApp(ChangeNotifierProvider(
+      create: (context) => StateModel(),
+      child: MyApp(),
+    ));
+}
 
 class MyApp extends StatelessWidget {
+
+  Future<void> _initState (BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    String userInfo = prefs.getString('userInfo');
+    print('init state');
+    if (userInfo != null) {
+      Provider.of<StateModel>(context, listen: false).setUserInfo(jsonDecode(userInfo));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    _initState(context);
+
     return MaterialApp(
       routes: {
         "login": (context) => FlutterEasyLoading(child: LoginPage()),

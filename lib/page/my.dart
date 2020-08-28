@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:dio/dio.dart';
 import 'package:assets_audio_player/assets_audio_player.dart';
 // import 'dart:developer';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:fluuter_demo/utils/api.dart';
+import 'package:dio/dio.dart';
 
 class PageMy extends StatelessWidget {
   @override
@@ -30,12 +31,6 @@ class PageMy extends StatelessWidget {
                 ]),
           ),
           _MusicList(),
-          RaisedButton(
-            child: Text('登录'),
-            onPressed: () => {
-              Navigator.pushNamed(context, "login")
-            }
-          ),
           Image.asset('assets/images/avatar.jpg'),
           Image.asset('assets/images/avatar.jpg'),
           Image.asset('assets/images/avatar.jpg')
@@ -58,7 +53,7 @@ class _MusicListState extends State<_MusicList> {
     EasyLoading.show();
     try {
       Response response =
-          await Dio().get("https://music.api.summerscar.me/top/song?type=8");
+          await api().get("https://music.api.summerscar.me/top/song?type=8");
       print('get response');
       setState(() {
         list = response.data['data'];

@@ -5,6 +5,10 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:fluuter_demo/utils/api.dart';
+import 'package:provider/provider.dart';
+import '../state/state.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage();
@@ -51,15 +55,17 @@ class _MainView extends StatelessWidget {
   final TextEditingController passwordController;
 
   void _login(BuildContext context) async {
-    String url = 'https://music.api.summerscar.me';
+    EasyLoading.show();
+
+    String url;
     if (usernameController.text.contains('@')) {
-      url +=
+      url =
           '/login?email=${usernameController.text.trim()}&password=${passwordController.text.trim()}';
     } else if (usernameController.text.contains(RegExp(r'^1[3-9]\d{9}$'))) {
-      url +=
+      url =
           '/login/cellphone?phone=${usernameController.text.trim()}&password=${passwordController.text.trim()}';
     } else {
-      print('username input error');
+      EasyLoading.dismiss();
       Fluttertoast.showToast(
           msg: "用户名/手机格式有误",
           toastLength: Toast.LENGTH_SHORT,
@@ -73,10 +79,16 @@ class _MainView extends StatelessWidget {
     }
 
     try {
-      Response response = await Dio().get(url);
+      Response response = await api().get(url);
       if (response.data['code'] == 200) {
+        int uid = response.data['profile']['userId'];
+        Response userDetail = await api().get('/user/detail?uid=$uid');
+        // print(userDetail);
+        Provider.of<StateModel>(context, listen: false).setUserInfo(userDetail.data['profile']);
+        EasyLoading.dismiss();
         Navigator.of(context).pushNamed('/');
       } else {
+        EasyLoading.dismiss();
         Fluttertoast.showToast(
             msg: response.data['msg'],
             toastLength: Toast.LENGTH_SHORT,
@@ -89,6 +101,7 @@ class _MainView extends StatelessWidget {
         print(response.data);
       }
     } catch (e) {
+      EasyLoading.dismiss();
       print(e);
     }
   }
