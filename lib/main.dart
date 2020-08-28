@@ -24,19 +24,19 @@ void main() {
   ..indicatorSize = 45.0;
 
   runApp(ChangeNotifierProvider(
-      create: (context) => StateModel(),
-      child: MyApp(),
-    ));
+    create: (context) => StateModel(),
+    child: MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
-
-  Future<void> _initState (BuildContext context) async {
+  Future<void> _initState(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     String userInfo = prefs.getString('userInfo');
     print('init state');
     if (userInfo != null) {
-      Provider.of<StateModel>(context, listen: false).setUserInfo(jsonDecode(userInfo));
+      Provider.of<StateModel>(context, listen: false)
+        .setUserInfo(jsonDecode(userInfo));
     }
   }
 
@@ -44,16 +44,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     _initState(context);
 
-    return MaterialApp(
-      routes: {
-        "login": (context) => FlutterEasyLoading(child: LoginPage()),
-        "/":(context) => FlutterEasyLoading(
-          child: MyHomePage(),
-        )
-      },
-      initialRoute: '/',
-      theme: ThemeData(primarySwatch: Colors.red)
-    );
+    return MaterialApp(routes: {
+      "login": (context) => FlutterEasyLoading(child: LoginPage()),
+      "/": (context) => FlutterEasyLoading(
+            child: MyHomePage(),
+          )
+    }, initialRoute: '/', theme: ThemeData(primarySwatch: Colors.red));
   }
 }
 
@@ -72,9 +68,7 @@ class MyHomePage extends StatelessWidget {
               cursorColor: Colors.white,
               decoration: InputDecoration(
                 hintText: "Search",
-                hintStyle: TextStyle(
-                  color: Colors.white70
-                ),
+                hintStyle: TextStyle(color: Colors.white70),
                 enabledBorder: UnderlineInputBorder(
                   borderSide: BorderSide(color: Colors.white10),
                 ),
@@ -103,6 +97,44 @@ class MyHomePage extends StatelessWidget {
               ),
             ],
           ),
+          bottomNavigationBar: Container(
+              height: 56,
+              margin: EdgeInsets.all(0),
+              child: Row(
+                children: <Widget>[
+                  Container(
+                    width: 66,
+                    color: Colors.green,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Icon(Icons.chat, color: Colors.white),
+                        Text("CHAT", style: TextStyle(color: Colors.white))
+                      ],
+                    ),
+                  ),
+                  Container(
+                    width: 66,
+                    color: Colors.green,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Icon(Icons.notifications_active, color: Colors.white),
+                        Text("NOTIF", style: TextStyle(color: Colors.white))
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Container(
+                      alignment: Alignment.center,
+                      color: Colors.red,
+                      child: Text("BUY NOW",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 18)),
+                    ),
+                  ),
+                ],
+              )),
         ));
   }
 }
