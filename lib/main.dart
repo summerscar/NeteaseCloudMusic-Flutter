@@ -15,13 +15,14 @@ import 'package:fluuter_demo/page/login.dart';
 import 'package:provider/provider.dart';
 import './state/state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import './page/search.dart';
 
 void main() {
   EasyLoading.instance
-  ..displayDuration = const Duration(milliseconds: 2000)
-  ..indicatorType = EasyLoadingIndicatorType.ring
-  ..loadingStyle = EasyLoadingStyle.dark
-  ..indicatorSize = 45.0;
+    ..displayDuration = const Duration(milliseconds: 2000)
+    ..indicatorType = EasyLoadingIndicatorType.ring
+    ..loadingStyle = EasyLoadingStyle.dark
+    ..indicatorSize = 45.0;
 
   runApp(ChangeNotifierProvider(
     create: (context) => StateModel(),
@@ -36,7 +37,7 @@ class MyApp extends StatelessWidget {
     print('init state');
     if (userInfo != null) {
       Provider.of<StateModel>(context, listen: false)
-        .setUserInfo(jsonDecode(userInfo));
+          .setUserInfo(jsonDecode(userInfo));
     }
   }
 
@@ -56,6 +57,20 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatelessWidget {
   final tabs = ['我的', '发现'];
 
+  void _search(BuildContext context) async {
+    final String selected = await showSearch<String>(
+      context: context,
+      delegate: MySearchDelegate(['a', 'b']),
+    );
+    if (selected != null) {
+      Scaffold.of(context).showSnackBar(
+        SnackBar(
+          content: Text('You have selected the word: $selected'),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -63,31 +78,22 @@ class MyHomePage extends StatelessWidget {
         child: Scaffold(
           drawer: ComponentDrawer(),
           appBar: AppBar(
-            title: TextField(
-              style: TextStyle(color: Colors.white),
-              cursorColor: Colors.white,
-              decoration: InputDecoration(
-                hintText: "Search",
-                hintStyle: TextStyle(color: Colors.white70),
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white10),
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white70),
-                ),
-                border: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white10),
-                ),
-                prefixIcon: Icon(
-                  Icons.search,
-                  color: Colors.white70,
-                ),
-              ),
-            ),
-            bottom: TabBar(
+            centerTitle: true,
+            title: TabBar(
+              labelStyle: TextStyle(fontSize: 16),
+              unselectedLabelStyle: TextStyle(fontSize: 14),
               isScrollable: true,
               tabs: [Tab(text: '我的'), Tab(text: '发现')],
+              indicator: BoxDecoration(),
             ),
+            actions: <Widget>[
+              Builder(
+                  builder: (context) => IconButton(
+                        tooltip: 'Search',
+                        icon: const Icon(Icons.search),
+                        onPressed: () => _search(context),
+                      )),
+            ],
           ),
           body: TabBarView(
             children: [
