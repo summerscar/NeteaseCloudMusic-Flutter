@@ -1,82 +1,36 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import '../utils/api.dart';
+import 'package:dio/dio.dart';
 
-/*
-import 'package:english_words/english_words.dart' as english_words;
-
-// Adapted from search demo in offical flutter gallery:
-// https://github.com/flutter/flutter/blob/master/examples/flutter_gallery/lib/demo/material/search_demo.dart
-class AppBarSearchExample extends StatefulWidget {
-  const AppBarSearchExample({Key key}) : super(key: key);
-
-  @override
-  _AppBarSearchExampleState createState() => _AppBarSearchExampleState();
-}
-
-class _AppBarSearchExampleState extends State<AppBarSearchExample> {
-  final List<String> kEnglishWords;
-  _MySearchDelegate _delegate;
-
-  _AppBarSearchExampleState()
-      : kEnglishWords = List.from(Set.from(english_words.all))
-          ..sort(
-            (w1, w2) => w1.toLowerCase().compareTo(w2.toLowerCase()),
-          ),
-        super();
-
-  @override
-  void initState() {
-    super.initState();
-    _delegate = _MySearchDelegate(kEnglishWords);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Text('English Words'),
-        actions: <Widget>[
-          IconButton(
-            tooltip: 'Search',
-            icon: const Icon(Icons.search),
-            onPressed: () async {
-              final String selected = await showSearch<String>(
-                context: context,
-                delegate: _delegate,
-              );
-              if (selected != null) {
-                Scaffold.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('You have selected the word: $selected'),
-                  ),
-                );
-              }
-            },
-          ),
-        ],
-      ),
-      body: Scrollbar(
-        child: ListView.builder(
-          itemCount: kEnglishWords.length,
-          itemBuilder: (context, idx) => ListTile(
-            title: Text(kEnglishWords[idx]),
-          ),
-        ),
-      ),
-    );
-  }
-}
-*/
 // Defines the content of the search page in `showSearch()`.
 // SearchDelegate has a member `query` which is the query string.
-class MySearchDelegate extends SearchDelegate<String> {
-  final List<String> _words;
+class MySearchDelegate extends SearchDelegate<int> {
   final List<String> _history;
 
-  MySearchDelegate(List<String> words)
-      : _words = words,
-        _history = <String>['apple', 'hello', 'world', 'flutter'],
+  MySearchDelegate()
+      : _history = <String>['apple', 'hello', 'world', 'flutter'],
         super();
+
+  Future _fetchPosts() async {
+    List<dynamic> reslut;
+    Response response;
+    if (this.query == '') return [];
+
+    try {
+      response = await api().get('/search?keywords=${this.query}');
+      if (response.data['code'] == 200 &&
+          response.data['result']['songCount'] > 0) {
+        reslut = response.data['result']['songs'];
+      } else {
+        reslut = [];
+      }
+    } catch (e) {
+      print(e);
+    }
+    return reslut;
+  }
 
   // Leading icon in search bar.
   @override
@@ -97,47 +51,55 @@ class MySearchDelegate extends SearchDelegate<String> {
   // Widget of result page.
   @override
   Widget buildResults(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text('You have selected the word:'),
-            GestureDetector(
-              onTap: () {
-                // Returns this.query as result to previous screen, c.f.
-                // `showSearch()` above.
-                this.close(context, this.query);
+    return FutureBuilder(
+      future: _fetchPosts(),
+      builder: (context, AsyncSnapshot snapshot) {
+        if (snapshot.hasData) {
+          final post = snapshot.data;
+          return ListView.separated(
+              itemBuilder: (BuildContext context, int index) {
+                return ListTile(
+                    title: Text(post[index]['name']),
+                    subtitle: Text(post[index]['artists']
+                        .map((artist) => artist['name'])
+                        .join(' / ')),
+                    onTap: () {
+                      this.close(context, post[index]['id']);
+                    });
               },
-              child: Text(
-                this.query,
-                style: Theme.of(context)
-                    .textTheme
-                    .headline4
-                    .copyWith(fontWeight: FontWeight.bold),
-              ),
-            ),
-          ],
-        ),
-      ),
+              separatorBuilder: (BuildContext context, int index) {
+                return Divider(
+                  color: Colors.black12,
+                  thickness: 1,
+                );
+              },
+              itemCount: post.length);
+        }
+        return Center(child: CircularProgressIndicator());
+      },
     );
   }
 
   // Suggestions list while typing (this.query).
   @override
   Widget buildSuggestions(BuildContext context) {
-    final Iterable<String> suggestions = this.query.isEmpty
-        ? _history
-        : _words.where((word) => word.startsWith(query));
+    return FutureBuilder(
+      future: _fetchPosts(),
+      builder: (context, AsyncSnapshot snapshot) {
+        if (snapshot.hasData) {
+          final post = snapshot.data;
 
-    return _SuggestionList(
-      query: this.query,
-      suggestions: suggestions.toList(),
-      onSelected: (String suggestion) {
-        this.query = suggestion;
-        this._history.insert(0, suggestion);
-        showResults(context);
+          return _SuggestionList(
+            query: this.query,
+            suggestions: this.query.isEmpty ? _history : post,
+            onSelected: (String suggestion) {
+              this.query = suggestion;
+              this._history.insert(0, suggestion);
+              showResults(context);
+            },
+          );
+        }
+        return Center(child: CircularProgressIndicator());
       },
     );
   }
@@ -147,13 +109,7 @@ class MySearchDelegate extends SearchDelegate<String> {
   List<Widget> buildActions(BuildContext context) {
     return <Widget>[
       query.isEmpty
-          ? IconButton(
-              tooltip: 'Voice Search',
-              icon: const Icon(Icons.mic),
-              onPressed: () {
-                this.query = 'TODO: implement voice input';
-              },
-            )
+          ? SizedBox()
           : IconButton(
               tooltip: 'Clear',
               icon: const Icon(Icons.clear),
@@ -170,37 +126,25 @@ class MySearchDelegate extends SearchDelegate<String> {
 class _SuggestionList extends StatelessWidget {
   const _SuggestionList({this.suggestions, this.query, this.onSelected});
 
-  final List<String> suggestions;
+  final List<dynamic> suggestions;
   final String query;
   final ValueChanged<String> onSelected;
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme.subtitle1;
+    // final textTheme = Theme.of(context).textTheme.subtitle1;
     return ListView.builder(
-      itemCount: suggestions.length,
-      itemBuilder: (BuildContext context, int i) {
-        final String suggestion = suggestions[i];
-        return ListTile(
-          leading: query.isEmpty ? Icon(Icons.history) : Icon(null),
-          // Highlight the substring that matched the query.
-          title: RichText(
-            text: TextSpan(
-              text: suggestion.substring(0, query.length),
-              style: textTheme.copyWith(fontWeight: FontWeight.bold),
-              children: <TextSpan>[
-                TextSpan(
-                  text: suggestion.substring(query.length),
-                  style: textTheme,
-                ),
-              ],
-            ),
-          ),
-          onTap: () {
-            onSelected(suggestion);
-          },
-        );
-      },
-    );
+        itemCount: suggestions.length,
+        itemBuilder: (BuildContext context, int i) {
+          final suggestion = suggestions[i];
+          return ListTile(
+            leading: query.isEmpty ? Icon(Icons.history) : Icon(null),
+            // Highlight the substring that matched the query.
+            title: Text(query.isEmpty ? suggestion : suggestion['name']),
+            onTap: () {
+              onSelected(query.isEmpty ? suggestion : suggestion['name']);
+            },
+          );
+        });
   }
 }

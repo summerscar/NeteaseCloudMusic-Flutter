@@ -7,10 +7,10 @@ Dio Function() api = (() {
     baseUrl: "https://music.api.summerscar.me",
     connectTimeout: 10000,
     receiveTimeout: 10000,
-);
+  );
 
-  final dio =  Dio(options);
-  var cookieJar=CookieJar();
+  final dio = Dio(options);
+  var cookieJar = CookieJar();
   dio.interceptors.add(CookieManager(cookieJar));
   // Print cookies
   // second request with the cookie
