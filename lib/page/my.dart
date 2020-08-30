@@ -31,6 +31,21 @@ class PageMy extends StatelessWidget {
                 ]),
           ),
           _MusicList(),
+          RaisedButton(
+            onPressed: () async {
+              print('clicked');
+              EasyLoading.show();
+              try {
+                Response response = await api().get("/login/status");
+                print('status ok');
+                print(response);
+              } catch (e) {
+                print(e);
+              }
+              EasyLoading.dismiss();
+            },
+            child: Text('status'),
+          ),
           Image.asset('assets/images/avatar.jpg'),
           Image.asset('assets/images/avatar.jpg'),
           Image.asset('assets/images/avatar.jpg')
@@ -52,8 +67,7 @@ class _MusicListState extends State<_MusicList> {
     print('clicked');
     EasyLoading.show();
     try {
-      Response response =
-          await api().get("https://music.api.summerscar.me/top/song?type=8");
+      Response response = await api().get("/top/song?type=8");
       print('get response');
       setState(() {
         list = response.data['data'];
@@ -63,7 +77,10 @@ class _MusicListState extends State<_MusicList> {
         context,
         MaterialPageRoute(
           builder: (context) {
-            return MusicPage(list: list, title: '最新歌曲',);
+            return MusicPage(
+              list: list,
+              title: '最新歌曲',
+            );
           },
         ),
       );

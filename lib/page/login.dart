@@ -9,6 +9,7 @@ import 'package:fluuter_demo/utils/api.dart';
 import 'package:provider/provider.dart';
 import '../state/state.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage();
@@ -81,10 +82,14 @@ class _MainView extends StatelessWidget {
     try {
       Response response = await api().get(url);
       if (response.data['code'] == 200) {
+        final prefs = await SharedPreferences.getInstance();
+        prefs.setString('cookie', response.data['cookie']);
+        prefs.setString('token', response.data['token']);
         int uid = response.data['profile']['userId'];
         Response userDetail = await api().get('/user/detail?uid=$uid');
         // print(userDetail);
-        Provider.of<StateModel>(context, listen: false).setUserInfo(userDetail.data['profile']);
+        Provider.of<StateModel>(context, listen: false)
+            .setUserInfo(userDetail.data['profile']);
         EasyLoading.dismiss();
         Navigator.of(context).pushNamed('/');
       } else {
