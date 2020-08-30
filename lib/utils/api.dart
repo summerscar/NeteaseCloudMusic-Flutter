@@ -6,6 +6,7 @@ import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 Dio Function() api = (() {
   final baseUrl = 'https://music.api.summerscar.me';
@@ -43,7 +44,10 @@ Dio Function() api = (() {
     }
     return options; //continue
   }));
-  dio.interceptors.add(CookieManager(cookieJar));
+
+  if (!kIsWeb) {
+    dio.interceptors.add(CookieManager(cookieJar));
+  }
 
   return () => dio;
 })();
