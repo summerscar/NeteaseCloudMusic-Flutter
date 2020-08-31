@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../song/song.dart';
 import 'package:assets_audio_player/assets_audio_player.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class StateModel extends ChangeNotifier {
   /// Internal, private state of the cart.
@@ -36,7 +37,7 @@ class StateModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  pause () {
+  pause() {
     if (this.isPlaying) {
       this.player.pause();
       this._isPlaying = false;
@@ -44,7 +45,7 @@ class StateModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  play () {
+  play() {
     if (!this.isPlaying && this._current != null) {
       this.player.play();
       this._isPlaying = true;
@@ -52,51 +53,69 @@ class StateModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  prev () {
-     int songIndex = this.currentIndex + 1 > this.songList.length
-      ? 0
-      : this.currentIndex + 1;
+  prev() {
+    int songIndex = this.currentIndex + 1 > this.songList.length
+        ? 0
+        : this.currentIndex + 1;
 
     this.playSong(this.songList[songIndex]);
     notifyListeners();
   }
 
-  next () {
+  next() {
     int songIndex = this.currentIndex - 1 < 0
-      ? this.songList.length - 1
-      : this.currentIndex - 1;
+        ? this.songList.length - 1
+        : this.currentIndex - 1;
 
     this.playSong(this.songList[songIndex]);
     notifyListeners();
   }
 
-  Future playSong (Song song) async {
+  Future playSong(Song song) async {
     if (this.isPlaying) {
       this.player.stop();
     }
+    try {
+      // if (!await song.check()) {
+      //   throw ('暂无版权无法播放');
+      // }
+      await this.player.open(
+            Audio.network(
+                'https://music.163.com/song/media/outer/url?id=${song.id}.mp3'),
+          );
+    } catch (e) {
+      Fluttertoast.showToast(
+          msg: "暂无版权无法播放",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          textColor: Colors.white,
+          webPosition: 'center',
+          fontSize: 14.0);
+      print(e);
+      return;
+    }
     this._current = song;
-    await this.player.open(
-      Audio.network('https://music.163.com/song/media/outer/url?id=${song.id}.mp3'),
-    );
     this._currentSongPic = await this.currentSong.getPicUrl();
     this._isPlaying = true;
   }
 
-  cleanList () {
+  cleanList() {
     this._songList.clear();
     notifyListeners();
   }
 
-  addSong (Song song) {
+  addSong(Song song) {
     this._songList.add(song);
     notifyListeners();
   }
-  addSongs (List<Song> list) {
+
+  addSongs(List<Song> list) {
     this._songList.addAll(list);
     notifyListeners();
   }
 
-  cleanThenAddSongsAndPlay (List<dynamic> listdata) async {
+  cleanThenAddSongsAndPlay(List<dynamic> listdata) async {
     if (listdata.isEmpty) return;
 
     List<Song> list = listdata.map((songdata) => Song(songdata));
@@ -106,7 +125,7 @@ class StateModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  cleanThenAddSongAndPlay (dynamic songdata) async {
+  cleanThenAddSongAndPlay(dynamic songdata) async {
     Song song = Song(songdata);
     this.cleanList();
     this.addSong(song);

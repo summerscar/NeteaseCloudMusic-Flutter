@@ -5,13 +5,14 @@ import '../utils/api.dart';
 import 'package:dio/dio.dart';
 import '../state/state.dart';
 import 'package:provider/provider.dart';
+
 // Defines the content of the search page in `showSearch()`.
 // SearchDelegate has a member `query` which is the query string.
 class MySearchDelegate extends SearchDelegate<dynamic> {
   StateModel state;
   final List<String> _history;
   MySearchDelegate(BuildContext context)
-      : _history = <String>['apple', 'hello', 'world', 'flutter'],
+      : _history = <String>['next to you', '芒种', 'world', 'flutter'],
         state = context.read<StateModel>(),
         super();
 
