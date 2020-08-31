@@ -3,14 +3,16 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import '../utils/api.dart';
 import 'package:dio/dio.dart';
-
+import '../state/state.dart';
+import 'package:provider/provider.dart';
 // Defines the content of the search page in `showSearch()`.
 // SearchDelegate has a member `query` which is the query string.
-class MySearchDelegate extends SearchDelegate<int> {
+class MySearchDelegate extends SearchDelegate<dynamic> {
+  StateModel state;
   final List<String> _history;
-
-  MySearchDelegate()
+  MySearchDelegate(BuildContext context)
       : _history = <String>['apple', 'hello', 'world', 'flutter'],
+        state = context.read<StateModel>(),
         super();
 
   Future _fetchPosts() async {
@@ -64,7 +66,8 @@ class MySearchDelegate extends SearchDelegate<int> {
                         .map((artist) => artist['name'])
                         .join(' / ')),
                     onTap: () {
-                      this.close(context, post[index]['id']);
+                      state.cleanThenAddSongAndPlay(post[index]);
+                      this.close(context, null);
                     });
               },
               separatorBuilder: (BuildContext context, int index) {

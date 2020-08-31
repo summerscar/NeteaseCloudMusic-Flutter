@@ -58,14 +58,14 @@ class MyHomePage extends StatelessWidget {
   final tabs = ['我的', '发现'];
 
   void _search(BuildContext context) async {
-    final int selected = await showSearch<int>(
+    final dynamic selected = await showSearch<dynamic>(
       context: context,
-      delegate: MySearchDelegate(),
+      delegate: MySearchDelegate(context),
     );
     if (selected != null) {
       Scaffold.of(context).showSnackBar(
         SnackBar(
-          content: Text('You have selected the songid: $selected'),
+          content: Text('You have selected the songid: ${selected['id']}'),
         ),
       );
     }

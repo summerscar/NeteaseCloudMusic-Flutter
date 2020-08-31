@@ -1,9 +1,13 @@
-import 'package:flutter/material.dart'
-;
+import 'package:flutter/material.dart';
+import '../state/state.dart';
+import 'package:provider/provider.dart';
+
 class BottonPlayer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    StateModel state = context.watch<StateModel>();
+
     return Container(
       decoration: BoxDecoration(
         border: Border(
@@ -21,7 +25,17 @@ class BottonPlayer extends StatelessWidget {
             height: 55,
             width: 55,
             color: Colors.green,
-            child: Image.asset('assets/images/avatar.jpg'),
+            child: Image.network(
+              state.currentSongPic ?? 'https://p1.music.126.net/wdD9S0BorAeBN28hE7WLKA==/3294136838291288.jpg',
+              loadingBuilder: (BuildContext context, Widget child,ImageChunkEvent loadingProgress) {
+                if (loadingProgress == null) return child;
+                return Container(
+                  decoration: new BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor),
+                  width: 55,
+                  height: 55
+                );
+              },
+            ),
           ),
           Expanded(
             child: Container(
@@ -34,13 +48,15 @@ class BottonPlayer extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('title'),
-                        Text('artist',
+                        state.currentSong != null ? Text(state.currentSong.name) : SizedBox(),
+                        state.currentSong != null ?
+                        Text(
+                          state.currentSong.artistsList.join(' '),
                           style: TextStyle(
                             color: Colors.black38
                           ),
-                        )
-                      ],
+                        ) : SizedBox()
+                      ]
                     )
                   ),
                   Container(
@@ -49,10 +65,19 @@ class BottonPlayer extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        Icon(
-                          Icons.play_circle_outline_rounded,
-                          size: 30,
-                          color: Colors.black54
+                        IconButton(
+                          icon: Icon(
+                            state.isPlaying ? Icons.pause_circle_outline_rounded : Icons.play_circle_outline_rounded,
+                            size: 30,
+                            color: state.currentSong != null ? Colors.black54 : Colors.black12
+                          ),
+                          onPressed: state.currentSong != null ? () {
+                            if (state.isPlaying) {
+                              state.pause();
+                            } else {
+                              state.play();
+                            }
+                          } : null
                         ),
                         Icon(
                           Icons.playlist_play_rounded,
