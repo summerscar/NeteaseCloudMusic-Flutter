@@ -46,9 +46,9 @@ class PageMy extends StatelessWidget {
             },
             child: Text('status'),
           ),
-          Image.asset('assets/images/avatar.jpg'),
-          Image.asset('assets/images/avatar.jpg'),
-          Image.asset('assets/images/avatar.jpg')
+          // Image.asset('assets/images/avatar.jpg'),
+          // Image.asset('assets/images/avatar.jpg'),
+          // Image.asset('assets/images/avatar.jpg')
         ],
       ),
     );

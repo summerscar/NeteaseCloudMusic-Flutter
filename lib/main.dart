@@ -16,7 +16,7 @@ import 'package:provider/provider.dart';
 import './state/state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import './page/search.dart';
-
+import './components/bottonPlayer.dart';
 void main() {
   EasyLoading.instance
     ..displayDuration = const Duration(milliseconds: 2000)
@@ -103,44 +103,7 @@ class MyHomePage extends StatelessWidget {
               ),
             ],
           ),
-          bottomNavigationBar: Container(
-              height: 56,
-              margin: EdgeInsets.all(0),
-              child: Row(
-                children: <Widget>[
-                  Container(
-                    width: 66,
-                    color: Colors.green,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Icon(Icons.chat, color: Colors.white),
-                        Text("CHAT", style: TextStyle(color: Colors.white))
-                      ],
-                    ),
-                  ),
-                  Container(
-                    width: 66,
-                    color: Colors.green,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Icon(Icons.notifications_active, color: Colors.white),
-                        Text("NOTIF", style: TextStyle(color: Colors.white))
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      alignment: Alignment.center,
-                      color: Colors.red,
-                      child: Text("BUY NOW",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 18)),
-                    ),
-                  ),
-                ],
-              )),
+          bottomNavigationBar: BottonPlayer(),
         ));
   }
 }
