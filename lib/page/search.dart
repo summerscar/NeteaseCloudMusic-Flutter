@@ -12,7 +12,7 @@ class MySearchDelegate extends SearchDelegate<dynamic> {
   StateModel state;
   final List<String> _history;
   MySearchDelegate(BuildContext context)
-      : _history = <String>['next to you', '芒种', 'world', 'flutter'],
+      : _history = <String>['next to you', '芒种', 'Track27', 'world', 'flutter'],
         state = context.read<StateModel>(),
         super();
 
@@ -62,18 +62,17 @@ class MySearchDelegate extends SearchDelegate<dynamic> {
           return ListView.separated(
               itemBuilder: (BuildContext context, int index) {
                 return ListTile(
-                    title: Text(post[index]['name']),
-                    subtitle: Text(post[index]['artists']
-                        .map((artist) => artist['name'])
-                        .join(' / ')),
-                    onTap: () {
-                      state.playSongOrigin(post[index]);
-                      this.close(context, null);
-                    },
-                    trailing: IconButton(
+                  title: Text(post[index]['name']),
+                  subtitle: Text(post[index]['artists']
+                      .map((artist) => artist['name'])
+                      .join(' / ')),
+                  onTap: () {
+                    state.playSongOrigin(post[index]);
+                    this.close(context, null);
+                  },
+                  trailing: IconButton(
                       icon: Icon(Icons.add_circle_outline_rounded),
-                      onPressed: () => state.addSongOrigin(post[index])
-                    ),
+                      onPressed: () => state.addSongOrigin(post[index])),
                 );
               },
               separatorBuilder: (BuildContext context, int index) {

@@ -72,9 +72,10 @@ class BottonPlayer extends StatelessWidget {
                                         ? Icons.pause_circle_outline_rounded
                                         : Icons.play_circle_outline_rounded,
                                     size: 30,
-                                    color: state.currentSong != null
-                                        ? Colors.black54
-                                        : Colors.black12),
+                                    color: state.currentSong == null &&
+                                            state.songList.isEmpty
+                                        ? Colors.black12
+                                        : Colors.black54),
                                 onPressed: state.currentSong != null
                                     ? () {
                                         if (state.isPlaying) {
@@ -83,7 +84,11 @@ class BottonPlayer extends StatelessWidget {
                                           state.play();
                                         }
                                       }
-                                    : null),
+                                    : (state.songList.isNotEmpty
+                                        ? () {
+                                            state.playSong(state.songList[0]);
+                                          }
+                                        : () {})),
                             IconButton(
                               icon: Icon(
                                 Icons.queue_music,
@@ -95,50 +100,66 @@ class BottonPlayer extends StatelessWidget {
                                   ? () {}
                                   : () => showModalBottomSheet(
                                         context: context,
-                                        builder: (BuildContext context) =>
-                                            Container(
-                                          alignment: Alignment.center,
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              0.4,
-                                          child: ListView.builder(
-                                              itemCount: state.songList.length,
-                                              itemBuilder:
-                                                  (BuildContext context,
-                                                      int index) {
-                                                return ListTile(
-                                                  leading: state.currentIndex == index ? Icon(
-                                                    Icons.music_note,
-                                                    color: Theme.of(context).primaryColor,
-                                                  ) : SizedBox(),
-                                                  title: Row(
-                                                    children: [
-                                                      Text(
-                                                        state.songList[index].name,
-                                                        style: TextStyle(
-                                                          color: state.currentIndex == index
-                                                          ? Theme.of(context).primaryColor : Colors.black,
+                                        builder: (BuildContext context) {
+                                          StateModel state =
+                                              context.watch<StateModel>();
+
+                                          return Container(
+                                            alignment: Alignment.center,
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.4,
+                                            child: ListView.builder(
+                                                itemCount:
+                                                    state.songList.length,
+                                                itemBuilder:
+                                                    (BuildContext context,
+                                                        int index) {
+                                                  return ListTile(
+                                                    leading: state
+                                                                .currentIndex ==
+                                                            index
+                                                        ? Icon(
+                                                            Icons.music_note,
+                                                            color: Theme.of(
+                                                                    context)
+                                                                .primaryColor,
+                                                          )
+                                                        : SizedBox(),
+                                                    title: Row(
+                                                      children: [
+                                                        Text(
+                                                          state.songList[index]
+                                                              .name,
+                                                          style: TextStyle(
+                                                            color: state.currentIndex ==
+                                                                    index
+                                                                ? Theme.of(
+                                                                        context)
+                                                                    .primaryColor
+                                                                : Colors.black,
+                                                          ),
                                                         ),
-                                                      ),
-                                                      Text(''),
-                                                      Text(
-                                                        ' - ${state.songList[index].artistsList.join(' ')}',
-                                                        style: TextStyle(
-                                                            fontSize: 12,
-                                                            color:
-                                                                Colors.black38),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  onTap: () {
-                                                    state.playSong(state
-                                                        .songList[index]);
-                                                    Navigator.pop(context);
-                                                  },
-                                                );
-                                              }),
-                                        ),
+                                                        Text(''),
+                                                        Text(
+                                                          ' - ${state.songList[index].artistsList.join(' ')}',
+                                                          style: TextStyle(
+                                                              fontSize: 12,
+                                                              color: Colors
+                                                                  .black38),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    onTap: () {
+                                                      state.playSong(state
+                                                          .songList[index]);
+                                                      Navigator.pop(context);
+                                                    },
+                                                  );
+                                                }),
+                                          );
+                                        },
                                       ),
                             ),
                           ]))

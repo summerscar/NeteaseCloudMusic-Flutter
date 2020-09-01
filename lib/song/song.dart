@@ -39,7 +39,6 @@ class Song {
     Response res = await api().get('/album?id=${this.album['id']}');
     List<dynamic> songs = res.data['songs'];
     dynamic song = songs.firstWhere((song) => song['id'] == this.id);
-    print('pic ${song['al']['picUrl']}');
     this.picUrl = song['al']['picUrl'];
     return this.picUrl;
   }
