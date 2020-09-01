@@ -25,7 +25,7 @@ class StateModel extends ChangeNotifier {
       this.setCurrentSongInfo(cur);
       playingAudio.audio.audio.updateMetas(
         title: cur.name,
-        artist: cur.artists.join(' '),
+        artist: cur.artistsList.join(' '),
         album: cur.album['name'],
         image: MetasImage.network(cur.picUrl),
       );
