@@ -4,7 +4,8 @@ import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:fluuter_demo/utils/api.dart';
 import 'package:dio/dio.dart';
-
+import '../state/state.dart';
+import 'package:provider/provider.dart';
 class PageMy extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -101,8 +102,9 @@ class _MusicListState extends State<_MusicList> {
 class _BuildMusicList extends StatelessWidget {
   final List<dynamic> items;
   final Function onClick;
+  final Function onAdd;
 
-  _BuildMusicList({Key key, @required this.items, this.onClick})
+  _BuildMusicList({Key key, @required this.items, this.onClick, this.onAdd})
       : super(key: key);
 
   @override
@@ -110,15 +112,17 @@ class _BuildMusicList extends StatelessWidget {
     return ListView.separated(
       itemCount: items.length,
       itemBuilder: (BuildContext context, int index) {
-        return GestureDetector(
-          child: ListTile(
+        return ListTile(
             title: Text(items[index]['name']),
             subtitle: Text(items[index]['artists']
                 .map((artist) => artist['name'])
                 .join(' / ')),
-          ),
-          onTap: () => onClick(items[index]['id']),
-        );
+            onTap: () => onClick(items[index]),
+            trailing: IconButton(
+              icon: Icon(Icons.add_circle_outline_rounded),
+              onPressed: () => onAdd(items[index])
+            ),
+          );
       },
       separatorBuilder: (BuildContext context, int index) {
         return Divider(color: Colors.grey);
@@ -128,6 +132,7 @@ class _BuildMusicList extends StatelessWidget {
 }
 
 class MusicPage extends StatelessWidget {
+
   MusicPage({
     Key key,
     this.title = '音乐列表',
@@ -136,34 +141,22 @@ class MusicPage extends StatelessWidget {
 
   final List list;
   final String title;
-  final assetsAudioPlayer = AssetsAudioPlayer();
-
-  void _clickHandler(id) async {
-    print('click $id');
-    try {
-      if (assetsAudioPlayer.isPlaying.value) {
-        assetsAudioPlayer.stop();
-      }
-      await assetsAudioPlayer.open(
-        Audio.network('https://music.163.com/song/media/outer/url?id=$id.mp3'),
-      );
-    } catch (t) {
-      print(t);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        assetsAudioPlayer.stop();
-        return true;
-      },
-      child: Scaffold(
+    final playSongOrigin = context.select((StateModel value) => value.playSongOrigin);
+    final addSongOrigin = context.select((StateModel value) => value.addSongOrigin);
+
+    void _clickHandler(songdata) {
+      playSongOrigin(songdata);
+      Navigator.pop(context);
+    }
+
+    return Scaffold(
           appBar: AppBar(
             title: Text(title),
           ),
-          body: _BuildMusicList(items: list, onClick: _clickHandler)),
+          body: _BuildMusicList(items: list, onClick: _clickHandler, onAdd: addSongOrigin)
     );
   }
 }

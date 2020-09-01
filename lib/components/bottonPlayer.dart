@@ -86,7 +86,7 @@ class BottonPlayer extends StatelessWidget {
                                     : null),
                             IconButton(
                               icon: Icon(
-                                Icons.menu,
+                                Icons.queue_music,
                                 color: state.songList.isEmpty
                                     ? Colors.black12
                                     : Colors.black54,
@@ -108,10 +108,19 @@ class BottonPlayer extends StatelessWidget {
                                                   (BuildContext context,
                                                       int index) {
                                                 return ListTile(
+                                                  leading: state.currentIndex == index ? Icon(
+                                                    Icons.music_note,
+                                                    color: Theme.of(context).primaryColor,
+                                                  ) : SizedBox(),
                                                   title: Row(
                                                     children: [
-                                                      Text(state.songList[index]
-                                                          .name),
+                                                      Text(
+                                                        state.songList[index].name,
+                                                        style: TextStyle(
+                                                          color: state.currentIndex == index
+                                                          ? Theme.of(context).primaryColor : Colors.black,
+                                                        ),
+                                                      ),
                                                       Text(''),
                                                       Text(
                                                         ' - ${state.songList[index].artistsList.join(' ')}',
@@ -123,8 +132,8 @@ class BottonPlayer extends StatelessWidget {
                                                     ],
                                                   ),
                                                   onTap: () {
-                                                    print(state
-                                                        .songList[index].name);
+                                                    state.playSong(state
+                                                        .songList[index]);
                                                     Navigator.pop(context);
                                                   },
                                                 );

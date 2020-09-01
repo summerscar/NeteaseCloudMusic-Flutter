@@ -67,9 +67,14 @@ class MySearchDelegate extends SearchDelegate<dynamic> {
                         .map((artist) => artist['name'])
                         .join(' / ')),
                     onTap: () {
-                      state.cleanThenAddSongAndPlay(post[index]);
+                      state.playSongOrigin(post[index]);
                       this.close(context, null);
-                    });
+                    },
+                    trailing: IconButton(
+                      icon: Icon(Icons.add_circle_outline_rounded),
+                      onPressed: () => state.addSongOrigin(post[index])
+                    ),
+                );
               },
               separatorBuilder: (BuildContext context, int index) {
                 return Divider(
