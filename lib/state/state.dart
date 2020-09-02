@@ -16,6 +16,7 @@ class StateModel extends ChangeNotifier {
   String _currentSongPic;
   int _currentIndex;
   LoopMode _playMode = LoopMode.none; // none
+  String _currentLyric;
 
   StateModel() {
     this._player.current.listen((playingAudio) async {
@@ -50,6 +51,7 @@ class StateModel extends ChangeNotifier {
   dynamic get userInfo => _userInfo;
   List<Song> get songList => _songList;
   LoopMode get playMode => this._playMode;
+  String get currentLyric => this._currentLyric;
 
   void setUserInfo(dynamic userInfo) async {
     final prefs = await SharedPreferences.getInstance();
@@ -80,10 +82,12 @@ class StateModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  toggleLoop () {
+  toggleLoop() {
     final modeList = [LoopMode.none, LoopMode.playlist, LoopMode.single];
     final nowModeIndex = modeList.indexOf(this.player.currentLoopMode);
-    this.player.setLoopMode(modeList[nowModeIndex + 1 > 2 ? 0 : nowModeIndex + 1]);
+    this
+        .player
+        .setLoopMode(modeList[nowModeIndex + 1 > 2 ? 0 : nowModeIndex + 1]);
   }
 
   next() {
@@ -100,7 +104,11 @@ class StateModel extends ChangeNotifier {
       //   throw ('暂无版权无法播放');
       // }
       this.setListAndIndexAfterPlay(song);
-      this._currentSongPic = await this._current.getPicUrl();
+      final promisePic = this._current.getPicUrl();
+      final promiseLyric = this._current.getLyric();
+      this._currentSongPic = await promisePic;
+      this._currentLyric = await promiseLyric;
+
       await this.player.open(
           Playlist(
               startIndex: this.songList.indexOf(this._current),
@@ -166,6 +174,7 @@ class StateModel extends ChangeNotifier {
     this._current = song;
     this._currentIndex = this.songList.indexOf(song);
     this._currentSongPic = await song.getPicUrl();
+    this._currentLyric = await song.getLyric();
     notifyListeners();
   }
 

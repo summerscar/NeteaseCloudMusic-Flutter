@@ -36,6 +36,8 @@ dependencies:
   provider: ^4.3.2
   shared_preferences: '>=0.5.10 <2.0.0'
   url_launcher: ^5.5.1
+  flutter_lyric: ^1.0.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -9,7 +9,8 @@ class Song {
   Map<String, dynamic> album;
   String picUrl;
   bool canPlay;
-
+  String lyric;
+  String tlyric;
   Song(Map song) {
     this.id = song['id'];
     this.name = song['name'];
@@ -49,5 +50,18 @@ class Song {
     Response res = await api().get('/check/music?id=${this.id}');
     this.canPlay = res.data['success'];
     return this.canPlay;
+  }
+
+  Future<String> getLyric() async {
+    if (this.lyric != null) {
+      return this.lyric;
+    }
+    Response res = await api().get('/lyric?id=${this.id}');
+    dynamic lrc = res.data['lrc'];
+    if (lrc != null) {
+      this.lyric = res.data['lrc']['lyric'];
+      return this.lyric;
+    }
+    return null;
   }
 }
