@@ -146,7 +146,7 @@ class _SuggestionList extends StatelessWidget {
         itemBuilder: (BuildContext context, int i) {
           final suggestion = suggestions[i];
           return ListTile(
-            leading: query.isEmpty ? Icon(Icons.history) : Icon(null),
+            leading: query.isEmpty ? Icon(Icons.history) : SizedBox(width: 0),
             // Highlight the substring that matched the query.
             title: Text(query.isEmpty ? suggestion : suggestion['name']),
             onTap: () {

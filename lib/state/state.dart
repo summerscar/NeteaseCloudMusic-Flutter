@@ -67,19 +67,23 @@ class StateModel extends ChangeNotifier {
   }
 
   pause() {
-    if (this.isPlaying) {
-      this.player.pause();
-      this._isPlaying = false;
-    }
+    this.player.pause();
+    this._isPlaying = false;
     notifyListeners();
   }
 
   play() {
-    if (!this.isPlaying && this._current != null) {
+    if (this._current != null) {
       this.player.play();
       this._isPlaying = true;
     }
     notifyListeners();
+  }
+
+  toggleLoop () {
+    final modeList = [LoopMode.none, LoopMode.playlist, LoopMode.single];
+    final nowModeIndex = modeList.indexOf(this.player.currentLoopMode);
+    this.player.setLoopMode(modeList[nowModeIndex + 1 > 2 ? 0 : nowModeIndex + 1]);
   }
 
   next() {

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:assets_audio_player/assets_audio_player.dart';
 // import 'dart:developer';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:fluuter_demo/utils/api.dart';
@@ -65,11 +64,9 @@ class _MusicListState extends State<_MusicList> {
   List list = [];
 
   void getHttp() async {
-    print('clicked');
     EasyLoading.show();
     try {
       Response response = await api().get("/top/song?type=8");
-      print('get response');
       setState(() {
         list = response.data['data'];
       });

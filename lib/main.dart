@@ -12,11 +12,13 @@ import 'package:fluuter_demo/page/my.dart';
 import 'package:fluuter_demo/components/drawer.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:fluuter_demo/page/login.dart';
+import 'package:fluuter_demo/page/player.dart';
 import 'package:provider/provider.dart';
 import './state/state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import './page/search.dart';
 import './components/bottonPlayer.dart';
+
 void main() {
   EasyLoading.instance
     ..displayDuration = const Duration(milliseconds: 2000)
@@ -49,7 +51,8 @@ class MyApp extends StatelessWidget {
       "login": (context) => FlutterEasyLoading(child: LoginPage()),
       "/": (context) => FlutterEasyLoading(
             child: MyHomePage(),
-          )
+          ),
+      "player": (context) => FlutterEasyLoading(child: PlayerPage()),
     }, initialRoute: '/', theme: ThemeData(primarySwatch: Colors.red));
   }
 }

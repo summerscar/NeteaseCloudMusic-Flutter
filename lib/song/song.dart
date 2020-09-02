@@ -20,15 +20,15 @@ class Song {
 
   String get songUrl =>
       'https://music.163.com/song/media/outer/url?id=${this.id}.mp3';
-  dynamic get artistsList {
-    return this.artists.map((artist) => artist['name']);
+  List<dynamic> get artistsList {
+    return this.artists.map((artist) => artist['name']).toList();
   }
 
   String get durationStr {
     String mm = (this.duration / 1000 ~/ 60).toString();
     String ss =
         ((this.duration / 1000) % 60).toInt().toString().padLeft(2, '0');
-    return '$mm : $ss';
+    return '$mm:$ss';
   }
 
   Future<String> getPicUrl() async {

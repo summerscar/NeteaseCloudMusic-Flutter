@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import '../state/state.dart';
 import 'package:provider/provider.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
 
 class BottonPlayer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     StateModel state = context.watch<StateModel>();
 
+    if (state.songList.isEmpty) {
+      return SizedBox();
+    }
     return Container(
         decoration: BoxDecoration(
           border: Border(
@@ -19,7 +23,13 @@ class BottonPlayer extends StatelessWidget {
         ),
         height: 56,
         margin: EdgeInsets.all(0),
-        child: Row(
+        child: InkWell(
+          onTap: () => {
+            if (state.currentSong != null) {
+              Navigator.pushNamed(context, 'player')
+            }
+          },
+          child: Row(
           children: <Widget>[
             Container(
               height: 55,
@@ -66,9 +76,10 @@ class BottonPlayer extends StatelessWidget {
                       child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            IconButton(
+                            state.player.builderIsPlaying(builder: (BuildContext context, isplaying) {
+                              return IconButton(
                                 icon: Icon(
-                                    state.isPlaying
+                                    isplaying
                                         ? Icons.pause_circle_outline_rounded
                                         : Icons.play_circle_outline_rounded,
                                     size: 30,
@@ -78,7 +89,7 @@ class BottonPlayer extends StatelessWidget {
                                         : Colors.black54),
                                 onPressed: state.currentSong != null
                                     ? () {
-                                        if (state.isPlaying) {
+                                        if (isplaying) {
                                           state.pause();
                                         } else {
                                           state.play();
@@ -88,7 +99,8 @@ class BottonPlayer extends StatelessWidget {
                                         ? () {
                                             state.playSong(state.songList[0]);
                                           }
-                                        : () {})),
+                                        : () {}));
+                            }),
                             IconButton(
                               icon: Icon(
                                 Icons.queue_music,
@@ -167,6 +179,8 @@ class BottonPlayer extends StatelessWidget {
               ),
             ),
           ],
-        ));
+        ),
+        )
+      );
   }
 }

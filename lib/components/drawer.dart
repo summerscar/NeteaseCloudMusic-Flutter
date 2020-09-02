@@ -34,31 +34,9 @@ class ComponentDrawer extends StatelessWidget {
   }
 
   List<ListTile> _drawerList(context, state) {
-    if (state.userInfo != null) {
-      return [
-        ListTile(
-          title: Text('退出'),
-          onTap: () async {
-            Provider.of<StateModel>(context, listen: false).setUserInfo(null);
-            Navigator.pop(context);
-          },
-        ),
-      ];
-    }
-    return [
-      ListTile(
-        title: Text('登录'),
-        onTap: () {
-          Navigator.pushNamed(context, "login");
-        },
-      ),
-      ListTile(
-        title: Text('关于'),
-        onTap: () {
-          // Update the state of the app.
-          // ...
-          Navigator.pop(context);
-          showBottomSheet<String>(
+
+    _showBottomSheet () {
+       showBottomSheet<String>(
             context: context,
             builder: (BuildContext context) => Container(
               decoration: BoxDecoration(
@@ -79,7 +57,7 @@ class ComponentDrawer extends StatelessWidget {
                         children: [
                           TextSpan(
                             style: TextStyle(color: Colors.black),
-                            text: 'By ',
+                            text: 'by ',
                           ),
                           TextSpan(
                             style: TextStyle(color: Colors.blue[300]),
@@ -110,6 +88,42 @@ class ComponentDrawer extends StatelessWidget {
               ),
             ),
           );
+    }
+
+    if (state.userInfo != null) {
+      return [
+        ListTile(
+          title: Text('退出'),
+          onTap: () async {
+            Provider.of<StateModel>(context, listen: false).setUserInfo(null);
+            Navigator.pop(context);
+          },
+        ),
+        ListTile(
+          title: Text('关于'),
+          onTap: () {
+            // Update the state of the app.
+            // ...
+            Navigator.pop(context);
+            _showBottomSheet();
+          },
+        ),
+      ];
+    }
+    return [
+      ListTile(
+        title: Text('登录'),
+        onTap: () {
+          Navigator.pushNamed(context, "login");
+        },
+      ),
+      ListTile(
+        title: Text('关于'),
+        onTap: () {
+          // Update the state of the app.
+          // ...
+          Navigator.pop(context);
+          _showBottomSheet();
         },
       ),
     ];
