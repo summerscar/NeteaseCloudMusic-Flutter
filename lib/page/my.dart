@@ -5,6 +5,7 @@ import 'package:fluuter_demo/utils/api.dart';
 import 'package:dio/dio.dart';
 import '../state/state.dart';
 import 'package:provider/provider.dart';
+
 class PageMy extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -20,13 +21,13 @@ class PageMy extends StatelessWidget {
                     children: [Icon(Icons.music_note), Text('本地音乐')],
                   ),
                   Column(
-                    children: [Icon(Icons.download_rounded), Text('下载管理')],
+                    children: [Icon(Icons.file_download), Text('下载管理')],
                   ),
                   Column(
                     children: [Icon(Icons.radio), Text('我的电台')],
                   ),
                   Column(
-                    children: [Icon(Icons.favorite_rounded), Text('我的收藏')],
+                    children: [Icon(Icons.favorite), Text('我的收藏')],
                   )
                 ]),
           ),
@@ -110,16 +111,15 @@ class _BuildMusicList extends StatelessWidget {
       itemCount: items.length,
       itemBuilder: (BuildContext context, int index) {
         return ListTile(
-            title: Text(items[index]['name']),
-            subtitle: Text(items[index]['artists']
-                .map((artist) => artist['name'])
-                .join(' / ')),
-            onTap: () => onClick(items[index]),
-            trailing: IconButton(
-              icon: Icon(Icons.add_circle_outline_rounded),
-              onPressed: () => onAdd(items[index])
-            ),
-          );
+          title: Text(items[index]['name']),
+          subtitle: Text(items[index]['artists']
+              .map((artist) => artist['name'])
+              .join(' / ')),
+          onTap: () => onClick(items[index]),
+          trailing: IconButton(
+              icon: Icon(Icons.add_circle_outline),
+              onPressed: () => onAdd(items[index])),
+        );
       },
       separatorBuilder: (BuildContext context, int index) {
         return Divider(color: Colors.grey);
@@ -129,7 +129,6 @@ class _BuildMusicList extends StatelessWidget {
 }
 
 class MusicPage extends StatelessWidget {
-
   MusicPage({
     Key key,
     this.title = '音乐列表',
@@ -141,8 +140,10 @@ class MusicPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final playSongOrigin = context.select((StateModel value) => value.playSongOrigin);
-    final addSongOrigin = context.select((StateModel value) => value.addSongOrigin);
+    final playSongOrigin =
+        context.select((StateModel value) => value.playSongOrigin);
+    final addSongOrigin =
+        context.select((StateModel value) => value.addSongOrigin);
 
     void _clickHandler(songdata) {
       playSongOrigin(songdata);
@@ -150,10 +151,10 @@ class MusicPage extends StatelessWidget {
     }
 
     return Scaffold(
-          appBar: AppBar(
-            title: Text(title),
-          ),
-          body: _BuildMusicList(items: list, onClick: _clickHandler, onAdd: addSongOrigin)
-    );
+        appBar: AppBar(
+          title: Text(title),
+        ),
+        body: _BuildMusicList(
+            items: list, onClick: _clickHandler, onAdd: addSongOrigin));
   }
 }

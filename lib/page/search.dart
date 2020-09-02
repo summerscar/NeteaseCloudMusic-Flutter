@@ -71,7 +71,7 @@ class MySearchDelegate extends SearchDelegate<dynamic> {
                     this.close(context, null);
                   },
                   trailing: IconButton(
-                      icon: Icon(Icons.add_circle_outline_rounded),
+                      icon: Icon(Icons.add_circle_outline),
                       onPressed: () => state.addSongOrigin(post[index])),
                 );
               },
