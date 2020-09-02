@@ -6,7 +6,7 @@
 // the help of [PageStorageKey].
 
 import 'dart:convert';
-
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:fluuter_demo/page/my.dart';
 import 'package:fluuter_demo/components/drawer.dart';
@@ -34,6 +34,8 @@ void main() {
 
 class MyApp extends StatelessWidget {
   Future<void> _initState(BuildContext context) async {
+    SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle(statusBarColor: Colors.transparent));
     final prefs = await SharedPreferences.getInstance();
     String userInfo = prefs.getString('userInfo');
     print('init state');
