@@ -35,18 +35,19 @@ class _PlayerPageState extends State<StatefulWidget> {
                 onPressed: () => Navigator.pushNamed(context, '/'))),
       );
     }
+    print('currentSongPic ${state.currentSongPic}');
     return Scaffold(
         body: Container(
-            decoration: state.currentSongPic != null
-                ? BoxDecoration(
+            decoration: state.currentSongPic == null
+                ? BoxDecoration(color: Colors.grey[300])
+                : BoxDecoration(
                     image: DecorationImage(
                       image: NetworkImage(state.currentSongPic),
                       fit: BoxFit.cover,
                     ),
-                  )
-                : BoxDecoration(color: Colors.grey[300]),
+                  ),
             child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+              filter: ImageFilter.blur(sigmaX: 30.0, sigmaY: 30.0),
               child: Container(
                   alignment: Alignment.center,
                   color: Colors.grey.withOpacity(0.1),
@@ -54,7 +55,12 @@ class _PlayerPageState extends State<StatefulWidget> {
                     Stack(
                       alignment: AlignmentDirectional.topStart,
                       children: [
-                        Image.network(state.currentSongPic),
+                        state.currentSongPic == null
+                            ? SizedBox(
+                                width: MediaQuery.of(context).size.width,
+                                height: MediaQuery.of(context).size.width,
+                              )
+                            : Image.network(state.currentSongPic),
                         IconButton(
                             icon: Icon(Icons.expand_more),
                             color: Colors.white,
@@ -121,7 +127,7 @@ class _PlayerPageState extends State<StatefulWidget> {
                                     },
                                     onChangeEnd: (double value) {
                                       setState(() {
-                                        isChanged = true;
+                                        isChanged = false;
                                       });
                                       state.player.seek(
                                           Duration(seconds: value.toInt()));
