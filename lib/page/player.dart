@@ -75,7 +75,7 @@ class _PlayerPageState extends State<StatefulWidget>
                           ],
                         ),
                         Container(
-                            padding: EdgeInsetsDirectional.zero,
+                            padding: EdgeInsetsDirectional.only(top: 15),
                             child: Column(
                               children: [
                                 Text(
@@ -97,148 +97,159 @@ class _PlayerPageState extends State<StatefulWidget>
                         state.player.builderCurrentPosition(
                           builder: (context, Duration position) {
                             if (state.currentLyric == null) {
-                              return SizedBox(
-                                height: 80,
-                              );
+                              return Expanded(
+                                  child: Center(
+                                child: Text(
+                                  '暂无歌词',
+                                  style: TextStyle(
+                                      fontSize: 14, color: Colors.white),
+                                ),
+                              ));
                             }
-                            return Container(
+                            return Expanded(
+                                child: Container(
                               padding: EdgeInsets.symmetric(vertical: 10),
                               child: LyricWidget(
                                   currLyricStyle: TextStyle(
-                                      fontSize: 13, color: Colors.white),
-                                  size: Size(300, 80),
+                                      fontSize: 14, color: Colors.white),
+                                  size: Size(300, 300),
                                   lyrics:
                                       LyricUtil.formatLyric(state.currentLyric),
                                   vsync: this,
                                   currentProgress:
                                       position.inMilliseconds.toDouble()),
-                            );
+                            ));
                           },
                         ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            Container(child: state.player
-                                .builderCurrentPosition(
-                                    builder: (context, Duration duration) {
-                              String nowTimeStr =
-                                  '${duration.inMinutes.remainder(60)}:${duration.inSeconds.remainder(60).toString().padLeft(2, '0')}';
+                        Container(
+                          padding: EdgeInsets.only(bottom: 10),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Container(child: state.player
+                                  .builderCurrentPosition(
+                                      builder: (context, Duration duration) {
+                                String nowTimeStr =
+                                    '${duration.inMinutes.remainder(60)}:${duration.inSeconds.remainder(60).toString().padLeft(2, '0')}';
 
-                              return SliderTheme(
-                                data: SliderTheme.of(context).copyWith(
-                                  activeTrackColor: Colors.white,
-                                  inactiveTrackColor: Colors.white38,
-                                  trackHeight: 2.0,
-                                  thumbColor: Colors.white,
-                                  thumbShape: RoundSliderThumbShape(
-                                    enabledThumbRadius: 6.0,
+                                return SliderTheme(
+                                  data: SliderTheme.of(context).copyWith(
+                                    activeTrackColor: Colors.white,
+                                    inactiveTrackColor: Colors.white38,
+                                    trackHeight: 2.0,
+                                    thumbColor: Colors.white,
+                                    thumbShape: RoundSliderThumbShape(
+                                      enabledThumbRadius: 6.0,
+                                    ),
+                                    overlayColor: Colors.purple.withAlpha(32),
+                                    overlayShape: RoundSliderOverlayShape(
+                                        overlayRadius: 14.0),
                                   ),
-                                  overlayColor: Colors.purple.withAlpha(32),
-                                  overlayShape: RoundSliderOverlayShape(
-                                      overlayRadius: 14.0),
-                                ),
-                                child: Column(
-                                  children: [
-                                    Slider(
-                                        value: isChanged
-                                            ? changedVal
-                                            : duration.inSeconds.toDouble(),
-                                        min: 0,
-                                        max: state.currentSong.duration / 1000,
-                                        onChangeStart: (double val) {
-                                          setState(() {
-                                            isChanged = true;
-                                            changedVal = val;
-                                          });
-                                        },
-                                        onChanged: (double val) {
-                                          setState(() {
-                                            isChanged = true;
-                                            changedVal = val;
-                                          });
-                                        },
-                                        onChangeEnd: (double value) {
-                                          setState(() {
-                                            isChanged = false;
-                                          });
-                                          state.player.seek(
-                                              Duration(seconds: value.toInt()));
-                                        }),
-                                    Container(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 12),
-                                        child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                nowTimeStr,
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 12),
-                                              ),
-                                              Text(
-                                                state.currentSong.durationStr,
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 12),
-                                              ),
-                                            ]))
-                                  ],
-                                ),
-                              );
-                              // return Text(duration.toString());
-                            })),
-                            Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  IconButton(
-                                      icon: Icon(Icons.favorite_border),
-                                      color: Colors.white,
-                                      iconSize: 30,
-                                      onPressed: () => {}),
-                                  IconButton(
-                                      icon: Icon(Icons.skip_previous),
-                                      color: Colors.white,
-                                      iconSize: 30,
-                                      onPressed: () => state.prev()),
-                                  state.player.builderIsPlaying(
-                                      builder: (context, bool isplaying) {
-                                    return IconButton(
-                                        icon: Icon(isplaying
-                                            ? Icons.pause_circle_outline
-                                            : Icons.play_circle_outline),
-                                        color: Colors.white,
-                                        iconSize: 50,
-                                        onPressed: () => {
-                                              isplaying
-                                                  ? state.pause()
-                                                  : state.play()
+                                  child: Column(
+                                    children: [
+                                      Slider(
+                                          value: isChanged
+                                              ? changedVal
+                                              : duration.inSeconds.toDouble(),
+                                          min: 0,
+                                          max:
+                                              state.currentSong.duration / 1000,
+                                          onChangeStart: (double val) {
+                                            setState(() {
+                                              isChanged = true;
+                                              changedVal = val;
                                             });
-                                  }),
-                                  IconButton(
-                                      icon: Icon(Icons.skip_next),
-                                      color: Colors.white,
-                                      iconSize: 30,
-                                      onPressed: () => state.next()),
-                                  state.player.builderLoopMode(
-                                      builder: (context, LoopMode mode) {
-                                    print('loop mode $mode');
-
-                                    return IconButton(
-                                        icon: Icon(mode == LoopMode.single
-                                            ? Icons.repeat_one
-                                            : (mode == LoopMode.playlist
-                                                ? Icons.repeat
-                                                : Icons.arrow_forward)),
+                                          },
+                                          onChanged: (double val) {
+                                            setState(() {
+                                              isChanged = true;
+                                              changedVal = val;
+                                            });
+                                          },
+                                          onChangeEnd: (double value) {
+                                            setState(() {
+                                              isChanged = false;
+                                            });
+                                            state.player.seek(Duration(
+                                                seconds: value.toInt()));
+                                          }),
+                                      Container(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 12),
+                                          child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  nowTimeStr,
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 12),
+                                                ),
+                                                Text(
+                                                  state.currentSong.durationStr,
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 12),
+                                                ),
+                                              ]))
+                                    ],
+                                  ),
+                                );
+                                // return Text(duration.toString());
+                              })),
+                              Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    IconButton(
+                                        icon: Icon(Icons.favorite_border),
                                         color: Colors.white,
                                         iconSize: 30,
-                                        onPressed: () => state.toggleLoop());
-                                  })
-                                ])
-                          ],
+                                        onPressed: () => {}),
+                                    IconButton(
+                                        icon: Icon(Icons.skip_previous),
+                                        color: Colors.white,
+                                        iconSize: 30,
+                                        onPressed: () => state.prev()),
+                                    state.player.builderIsPlaying(
+                                        builder: (context, bool isplaying) {
+                                      return IconButton(
+                                          icon: Icon(isplaying
+                                              ? Icons.pause_circle_outline
+                                              : Icons.play_circle_outline),
+                                          color: Colors.white,
+                                          iconSize: 50,
+                                          onPressed: () => {
+                                                isplaying
+                                                    ? state.pause()
+                                                    : state.play()
+                                              });
+                                    }),
+                                    IconButton(
+                                        icon: Icon(Icons.skip_next),
+                                        color: Colors.white,
+                                        iconSize: 30,
+                                        onPressed: () => state.next()),
+                                    state.player.builderLoopMode(
+                                        builder: (context, LoopMode mode) {
+                                      print('loop mode $mode');
+
+                                      return IconButton(
+                                          icon: Icon(mode == LoopMode.single
+                                              ? Icons.repeat_one
+                                              : (mode == LoopMode.playlist
+                                                  ? Icons.repeat
+                                                  : Icons.arrow_forward)),
+                                          color: Colors.white,
+                                          iconSize: 30,
+                                          onPressed: () => state.toggleLoop());
+                                    })
+                                  ])
+                            ],
+                          ),
                         )
                       ])),
             )));
