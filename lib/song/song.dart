@@ -11,12 +11,13 @@ class Song {
   bool canPlay;
   String lyric;
   String tlyric;
+
   Song(Map song) {
     this.id = song['id'];
     this.name = song['name'];
-    this.duration = song['duration'];
-    this.artists = song['artists'];
-    this.album = song['album'];
+    this.duration = song['duration'] ?? song['dt'];
+    this.artists = song['artists'] ?? song['ar'];
+    this.album = song['album'] ?? song['al'];
   }
 
   String get songUrl =>

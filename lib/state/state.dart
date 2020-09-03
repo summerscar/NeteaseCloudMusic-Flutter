@@ -73,7 +73,7 @@ class StateModel extends ChangeNotifier {
       Song cur = this
           ._songList
           .firstWhere((song) => song.songUrl == playingAudio.audio.audio.path);
-      this.setCurrentSongInfo(cur);
+      this.setCurrentSongInfo(cur, playingAudio.audio.audio);
       this.setPlaying(true);
       print('music changed to: ${cur.name}');
     });
@@ -209,16 +209,16 @@ class StateModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  setCurrentSongInfo(Song song) async {
+  setCurrentSongInfo(Song song, Audio audio) async {
     this._current = song;
     this._currentIndex = this.songList.indexOf(song);
     this._currentSongPic = await song.getPicUrl();
     this._currentLyric = await song.getLyric();
+    audio.updateMetas(image: MetasImage.network(this._currentSongPic));
     notifyListeners();
   }
 
   cleanList() {
-    this._player.playlistPlayAtIndex(0);
     this._songList.clear();
     this._playlist.audios.clear();
     this.playerInited = false;
@@ -239,9 +239,6 @@ class StateModel extends ChangeNotifier {
     this._songList.add(song);
     print('now list: ${this._songList.map((e) => e.name).join('/')}');
     notifyListeners();
-    song
-        .getPicUrl()
-        .then((value) => audio.updateMetas(image: MetasImage.network(value)));
   }
 
   addSongOrigin(songdata) {
@@ -266,14 +263,14 @@ class StateModel extends ChangeNotifier {
     print('now list: ${this._songList.map((e) => e.name).join('/')}');
     notifyListeners();
 
-    Future.wait(songlist.map((song) => song.getPicUrl()))
-        .then((List<String> value) {
-      value.asMap().forEach((index, url) {
-        audios[index].updateMetas(image: MetasImage.network(url));
-      });
-    }).catchError((e) {
-      print(e);
-    });
+    // Future.wait(songlist.map((song) => song.getPicUrl()))
+    //     .then((List<String> value) {
+    //   value.asMap().forEach((index, url) {
+    //     audios[index].updateMetas(image: MetasImage.network(url));
+    //   });
+    // }).catchError((e) {
+    //   print(e);
+    // });
   }
 
   addListOrigin(List<dynamic> songlistdata) {

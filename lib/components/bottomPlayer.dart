@@ -61,11 +61,15 @@ class BottonPlayer extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                           state.currentSong != null
-                              ? Text(state.currentSong.name)
+                              ? Text(
+                                  state.currentSong.name,
+                                  overflow: TextOverflow.ellipsis,
+                                )
                               : SizedBox(),
                           state.currentSong != null
                               ? Text(
                                   state.currentSong.artistsList.join(' '),
+                                  overflow: TextOverflow.ellipsis,
                                   style: TextStyle(color: Colors.black38),
                                 )
                               : SizedBox()
@@ -115,7 +119,8 @@ class BottonPlayer extends StatelessWidget {
                                     : () => showModalBottomSheet(
                                           context: context,
                                           builder: (BuildContext context) {
-                                            StateModel state = context.watch<StateModel>();
+                                            StateModel state =
+                                                context.watch<StateModel>();
                                             return BottomSheetComponent(state);
                                           },
                                         ),

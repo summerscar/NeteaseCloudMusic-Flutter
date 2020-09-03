@@ -68,7 +68,8 @@ class _PlayerPageState extends State<StatefulWidget>
                                   )
                                 : Image.network(state.currentSongPic),
                             IconButton(
-                                padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+                                padding: EdgeInsets.only(
+                                    top: MediaQuery.of(context).padding.top),
                                 icon: Icon(Icons.expand_more),
                                 color: Colors.white,
                                 onPressed: () =>
@@ -80,42 +81,47 @@ class _PlayerPageState extends State<StatefulWidget>
                             child: Column(
                               children: [
                                 Container(
-                                  padding: EdgeInsetsDirectional.only(bottom: 5),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                       IconButton(
-                                        icon: Icon(
-                                          Icons.add_circle_outline,
-                                          color: Colors.white.withOpacity(0.75),
-                                          size: 20,
-                                        ),
-                                        onPressed: () => {}
-                                      ),
-                                      Text(
-                                        state.currentSong.name,
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.normal),
-                                      ),
-                                      IconButton(
-                                        icon: Icon(
-                                          Icons.favorite_border,
-                                          color: Colors.white.withOpacity(0.75),
-                                          size: 20,
-                                        ),
-                                        onPressed: () => {}
-                                      )
-                                    ]
-                                  )
-                                ),
+                                    padding:
+                                        EdgeInsetsDirectional.only(bottom: 5),
+                                    child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          IconButton(
+                                              icon: Icon(
+                                                Icons.add_circle_outline,
+                                                color: Colors.white
+                                                    .withOpacity(0.75),
+                                                size: 20,
+                                              ),
+                                              onPressed: () => {}),
+                                          Expanded(
+                                              child: Center(
+                                                  child: Text(
+                                            state.currentSong.name,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            softWrap: false,
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.normal),
+                                          ))),
+                                          IconButton(
+                                              icon: Icon(
+                                                Icons.favorite_border,
+                                                color: Colors.white
+                                                    .withOpacity(0.75),
+                                                size: 20,
+                                              ),
+                                              onPressed: () => {})
+                                        ])),
                                 Text(
                                   state.currentSong.artistsList.join(' '),
                                   style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 13),
+                                      color: Colors.white, fontSize: 13),
                                 )
                               ],
                             )),
@@ -159,7 +165,8 @@ class _PlayerPageState extends State<StatefulWidget>
 
                                 return SliderTheme(
                                   data: SliderTheme.of(context).copyWith(
-                                    activeTrackColor: Colors.white.withOpacity(0.75),
+                                    activeTrackColor:
+                                        Colors.white.withOpacity(0.75),
                                     inactiveTrackColor: Colors.white38,
                                     trackHeight: 1.0,
                                     thumbColor: Colors.white.withOpacity(0.85),
@@ -266,20 +273,19 @@ class _PlayerPageState extends State<StatefulWidget>
                                         icon: Icon(Icons.skip_next),
                                         color: Colors.white.withOpacity(0.75),
                                         iconSize: 30,
-                                        onPressed: () => state.next()
-                                    ),
+                                        onPressed: () => state.next()),
                                     IconButton(
-                                      icon: Icon(Icons.queue_music),
-                                      color: Colors.white.withOpacity(0.75),
-                                      iconSize: 30,
-                                      onPressed: () => showModalBottomSheet(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            StateModel state = context.watch<StateModel>();
-                                            return BottomSheetComponent(state);
-                                          }
-                                      )
-                                    )
+                                        icon: Icon(Icons.queue_music),
+                                        color: Colors.white.withOpacity(0.75),
+                                        iconSize: 30,
+                                        onPressed: () => showModalBottomSheet(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              StateModel state =
+                                                  context.watch<StateModel>();
+                                              return BottomSheetComponent(
+                                                  state);
+                                            }))
                                   ]),
                             ],
                           ),

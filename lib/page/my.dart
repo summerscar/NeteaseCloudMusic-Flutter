@@ -9,6 +9,7 @@ import 'package:dio/dio.dart';
 import '../state/state.dart';
 import 'package:provider/provider.dart';
 import '../utils/api.dart';
+import './musicList.dart';
 
 class PageMy extends StatefulWidget {
   @override
@@ -37,6 +38,26 @@ class _PageMyState extends State<PageMy> {
   @override
   Widget build(BuildContext context) {
     StateModel state = context.watch<StateModel>();
+
+    void _musicListClickHandler(dynamic musiclist) async {
+      print('${musiclist['name']} ${musiclist['id']}');
+
+      EasyLoading.show();
+      Response res = await api().get('/playlist/detail?id=${musiclist['id']}');
+      List<dynamic> tracks = res.data['playlist']['tracks'];
+      EasyLoading.dismiss();
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) {
+            return MusicListPage(
+              list: tracks,
+              title: musiclist['name'],
+            );
+          },
+        ),
+      );
+    }
 
     return SingleChildScrollView(
       child: Column(
@@ -70,7 +91,9 @@ class _PageMyState extends State<PageMy> {
                         child: AspectRatio(
                           aspectRatio: 1.0,
                           child: InkWell(
-                              onTap: () {},
+                              onTap: () {
+                                _musicListClickHandler(state.myPlayList[0]);
+                              },
                               child: Container(
                                 width: double.infinity,
                                 decoration: BoxDecoration(
@@ -108,8 +131,10 @@ class _PageMyState extends State<PageMy> {
                                     itemBuilder: (context, index) {
                                       return InkWell(
                                           onTap: () {
-                                            print(
-                                                '${state.myPlayList.getRange(1, 5).elementAt(index)['name']}');
+                                            _musicListClickHandler(state
+                                                .myPlayList
+                                                .getRange(1, 5)
+                                                .elementAt(index));
                                           },
                                           child: Container(
                                               decoration: BoxDecoration(
@@ -126,9 +151,26 @@ class _PageMyState extends State<PageMy> {
                                                   filter: ImageFilter.blur(
                                                       sigmaX: 0, sigmaY: 0),
                                                   child: Container(
-                                                    alignment: Alignment.center,
-                                                    color: Colors.grey
-                                                        .withOpacity(0.1),
+                                                    alignment:
+                                                        Alignment.bottomLeft,
+                                                    color: Colors.black
+                                                        .withOpacity(0.4),
+                                                    child: Padding(
+                                                      padding:
+                                                          EdgeInsets.all(5),
+                                                      child: Text(
+                                                        state.myPlayList
+                                                            .getRange(1, 5)
+                                                            .elementAt(
+                                                                index)['name'],
+                                                        overflow:
+                                                            TextOverflow.fade,
+                                                        style: TextStyle(
+                                                            color: Colors.white
+                                                                .withOpacity(
+                                                                    0.8)),
+                                                      ),
+                                                    ),
                                                   ))));
                                     },
                                   )
@@ -226,7 +268,7 @@ class _MusicListState extends State<_MusicList> {
         context,
         MaterialPageRoute(
           builder: (context) {
-            return MusicPage(
+            return MusicListPage(
               list: list,
               title: '最新歌曲',
             );
@@ -244,82 +286,5 @@ class _MusicListState extends State<_MusicList> {
       child: Text('最新歌曲'),
       onPressed: getHttp,
     );
-  }
-}
-
-class _BuildMusicList extends StatelessWidget {
-  final List<dynamic> items;
-
-  _BuildMusicList({Key key, @required this.items}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    StateModel state = context.watch<StateModel>();
-
-    void _clickHandler(songdata) {
-      state.playSongOrigin(songdata);
-      Navigator.pop(context);
-    }
-
-    void _playList() {
-      state.playListOrigin(this.items);
-      Navigator.pop(context);
-    }
-
-    return Column(
-      children: [
-        InkWell(
-          onTap: _playList,
-          child: Container(
-            padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-            child: Row(
-              children: [
-                Icon(Icons.play_circle_outline),
-                Padding(padding: EdgeInsets.only(left: 10), child: Text('播放列表'))
-              ],
-            ),
-          ),
-        ),
-        Expanded(
-            child: ListView.separated(
-          itemCount: items.length,
-          itemBuilder: (BuildContext context, int index) {
-            return ListTile(
-              title: Text(items[index]['name']),
-              subtitle: Text(items[index]['artists']
-                  .map((artist) => artist['name'])
-                  .join(' / ')),
-              onTap: () => _clickHandler(items[index]),
-              trailing: IconButton(
-                  icon: Icon(Icons.add_circle_outline),
-                  onPressed: () => state.addSongOrigin(items[index])),
-            );
-          },
-          separatorBuilder: (BuildContext context, int index) {
-            return Divider(color: Colors.grey);
-          },
-        ))
-      ],
-    );
-  }
-}
-
-class MusicPage extends StatelessWidget {
-  MusicPage({
-    Key key,
-    this.title = '音乐列表',
-    @required this.list, // 接收一个text参数
-  }) : super(key: key);
-
-  final List list;
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(title),
-        ),
-        body: _BuildMusicList(items: list));
   }
 }
