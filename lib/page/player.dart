@@ -5,6 +5,7 @@ import 'dart:ui';
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter_lyric/lyric_util.dart';
 import 'package:flutter_lyric/lyric_widget.dart';
+import '../components/bottomSheet.dart';
 
 class PlayerPage extends StatefulWidget {
   @override
@@ -67,7 +68,7 @@ class _PlayerPageState extends State<StatefulWidget>
                                   )
                                 : Image.network(state.currentSongPic),
                             IconButton(
-                                padding: EdgeInsets.only(top: 20),
+                                padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
                                 icon: Icon(Icons.expand_more),
                                 color: Colors.white,
                                 onPressed: () =>
@@ -78,19 +79,43 @@ class _PlayerPageState extends State<StatefulWidget>
                             padding: EdgeInsetsDirectional.only(top: 15),
                             child: Column(
                               children: [
-                                Text(
-                                  state.currentSong.name,
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.normal),
+                                Container(
+                                  padding: EdgeInsetsDirectional.only(bottom: 5),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                       IconButton(
+                                        icon: Icon(
+                                          Icons.add_circle_outline,
+                                          color: Colors.white.withOpacity(0.75),
+                                          size: 20,
+                                        ),
+                                        onPressed: () => {}
+                                      ),
+                                      Text(
+                                        state.currentSong.name,
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.normal),
+                                      ),
+                                      IconButton(
+                                        icon: Icon(
+                                          Icons.favorite_border,
+                                          color: Colors.white.withOpacity(0.75),
+                                          size: 20,
+                                        ),
+                                        onPressed: () => {}
+                                      )
+                                    ]
+                                  )
                                 ),
                                 Text(
                                   state.currentSong.artistsList.join(' '),
                                   style: TextStyle(
                                       color: Colors.white,
-                                      fontSize: 13,
-                                      height: 1.5),
+                                      fontSize: 13),
                                 )
                               ],
                             )),
@@ -134,10 +159,10 @@ class _PlayerPageState extends State<StatefulWidget>
 
                                 return SliderTheme(
                                   data: SliderTheme.of(context).copyWith(
-                                    activeTrackColor: Colors.white,
+                                    activeTrackColor: Colors.white.withOpacity(0.75),
                                     inactiveTrackColor: Colors.white38,
-                                    trackHeight: 2.0,
-                                    thumbColor: Colors.white,
+                                    trackHeight: 1.0,
+                                    thumbColor: Colors.white.withOpacity(0.85),
                                     thumbShape: RoundSliderThumbShape(
                                       enabledThumbRadius: 6.0,
                                     ),
@@ -175,7 +200,7 @@ class _PlayerPageState extends State<StatefulWidget>
                                           }),
                                       Container(
                                           padding: EdgeInsets.symmetric(
-                                              horizontal: 12),
+                                              horizontal: 14),
                                           child: Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment
@@ -204,35 +229,6 @@ class _PlayerPageState extends State<StatefulWidget>
                                       MainAxisAlignment.spaceAround,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    IconButton(
-                                        icon: Icon(Icons.favorite_border),
-                                        color: Colors.white,
-                                        iconSize: 30,
-                                        onPressed: () => {}),
-                                    IconButton(
-                                        icon: Icon(Icons.skip_previous),
-                                        color: Colors.white,
-                                        iconSize: 30,
-                                        onPressed: () => state.prev()),
-                                    state.player.builderIsPlaying(
-                                        builder: (context, bool isplaying) {
-                                      return IconButton(
-                                          icon: Icon(isplaying
-                                              ? Icons.pause_circle_outline
-                                              : Icons.play_circle_outline),
-                                          color: Colors.white,
-                                          iconSize: 50,
-                                          onPressed: () => {
-                                                isplaying
-                                                    ? state.pause()
-                                                    : state.play()
-                                              });
-                                    }),
-                                    IconButton(
-                                        icon: Icon(Icons.skip_next),
-                                        color: Colors.white,
-                                        iconSize: 30,
-                                        onPressed: () => state.next()),
                                     state.player.builderLoopMode(
                                         builder: (context, LoopMode mode) {
                                       print('loop mode $mode');
@@ -243,11 +239,48 @@ class _PlayerPageState extends State<StatefulWidget>
                                               : (mode == LoopMode.playlist
                                                   ? Icons.repeat
                                                   : Icons.arrow_forward)),
-                                          color: Colors.white,
+                                          color: Colors.white.withOpacity(0.75),
                                           iconSize: 30,
                                           onPressed: () => state.toggleLoop());
-                                    })
-                                  ])
+                                    }),
+                                    IconButton(
+                                        icon: Icon(Icons.skip_previous),
+                                        color: Colors.white.withOpacity(0.75),
+                                        iconSize: 30,
+                                        onPressed: () => state.prev()),
+                                    state.player.builderIsPlaying(
+                                        builder: (context, bool isplaying) {
+                                      return IconButton(
+                                          icon: Icon(isplaying
+                                              ? Icons.pause_circle_outline
+                                              : Icons.play_circle_outline),
+                                          color: Colors.white.withOpacity(0.85),
+                                          iconSize: 50,
+                                          onPressed: () => {
+                                                isplaying
+                                                    ? state.pause()
+                                                    : state.play()
+                                              });
+                                    }),
+                                    IconButton(
+                                        icon: Icon(Icons.skip_next),
+                                        color: Colors.white.withOpacity(0.75),
+                                        iconSize: 30,
+                                        onPressed: () => state.next()
+                                    ),
+                                    IconButton(
+                                      icon: Icon(Icons.queue_music),
+                                      color: Colors.white.withOpacity(0.75),
+                                      iconSize: 30,
+                                      onPressed: () => showModalBottomSheet(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            StateModel state = context.watch<StateModel>();
+                                            return BottomSheetComponent(state);
+                                          }
+                                      )
+                                    )
+                                  ]),
                             ],
                           ),
                         )

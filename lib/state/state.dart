@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -15,22 +17,20 @@ class StateModel extends ChangeNotifier {
   List<Song> _songList = [];
   String _currentSongPic;
   int _currentIndex;
-  LoopMode _playMode = LoopMode.none; // none
+  LoopMode _playMode = LoopMode.playlist; // none
   String _currentLyric;
+  Playlist _playlist = Playlist(audios: []);
+  bool playerInited = false;
 
   StateModel() {
+    // init player
     this._player.current.listen((playingAudio) async {
       Song cur = this
           ._songList
           .firstWhere((song) => song.songUrl == playingAudio.audio.audio.path);
       this.setCurrentSongInfo(cur);
-      playingAudio.audio.audio.updateMetas(
-        title: cur.name,
-        artist: cur.artistsList.join(' '),
-        album: cur.album['name'],
-        image: MetasImage.network(cur.picUrl),
-      );
       this.setPlaying(true);
+      print('music changed to: ${cur.name}');
     });
     this._player.playlistAudioFinished.listen((Playing playing) {
       this.setPlaying(false);
@@ -52,6 +52,7 @@ class StateModel extends ChangeNotifier {
   List<Song> get songList => _songList;
   LoopMode get playMode => this._playMode;
   String get currentLyric => this._currentLyric;
+  Playlist get playlist => this._playlist;
 
   void setUserInfo(dynamic userInfo) async {
     final prefs = await SharedPreferences.getInstance();
@@ -83,11 +84,11 @@ class StateModel extends ChangeNotifier {
   }
 
   toggleLoop() {
-    final modeList = [LoopMode.none, LoopMode.playlist, LoopMode.single];
+    final modeList = [LoopMode.single, LoopMode.playlist, LoopMode.single];
     final nowModeIndex = modeList.indexOf(this.player.currentLoopMode);
     this
         .player
-        .setLoopMode(modeList[nowModeIndex + 1 > 2 ? 0 : nowModeIndex + 1]);
+        .setLoopMode(modeList[nowModeIndex + 1 > modeList.length ? 0 : nowModeIndex + 1]);
   }
 
   next() {
@@ -98,28 +99,50 @@ class StateModel extends ChangeNotifier {
     this.player.previous();
   }
 
+  remove (Song song) {
+    if (this.songList.length == 1) {
+      this.player.stop();
+      this._currentIndex = null;
+      this._current = null;
+      this._currentLyric = null;
+      this._currentSongPic = null;
+    }
+    int index =  this.songList.indexOf(song);
+    this._songList.removeAt(index);
+    this._playlist.removeAtIndex(index);
+    notifyListeners();
+  }
+
+  removeAll () {
+    this.player.stop();
+    this.cleanList();
+    this._currentIndex = null;
+    this._current = null;
+    this._currentLyric = null;
+    this._currentSongPic = null;
+    notifyListeners();
+  }
+
   Future playSong(Song song) async {
     try {
+
       // if (!await song.check()) {
       //   throw ('暂无版权无法播放');
       // }
       this.setListAndIndexAfterPlay(song);
-      final promisePic = this._current.getPicUrl();
-      final promiseLyric = this._current.getLyric();
-      this._currentSongPic = await promisePic;
-      this._currentLyric = await promiseLyric;
 
-      await this.player.open(
-          Playlist(
-              startIndex: this.songList.indexOf(this._current),
-              audios: this
-                  .songList
-                  .map((song) => Audio.network(song.songUrl))
-                  .toList()),
+      print('play index: $currentIndex');
+
+      if (!playerInited) {
+        this.player.open(
+          this.playlist,
+          autoStart: false,
           loopMode: LoopMode.playlist,
           showNotification: true //loop the full playlist
-          );
-      print('now playing list: ${this.songList.map((e) => e.name).join('/')}');
+        );
+        this.playerInited = true;
+      }
+      this.player.playlistPlayAtIndex(this.currentIndex);
     } catch (e) {
       Fluttertoast.showToast(
           msg: "播放出错",
@@ -180,25 +203,71 @@ class StateModel extends ChangeNotifier {
 
   cleanList() {
     this._songList.clear();
+    int audioLength = this._playlist.audios.length;
+    for (int i = audioLength - 1; i > -1 ; i--) {
+        this._playlist.removeAtIndex(i);
+    }
     notifyListeners();
   }
 
-  addSong(Song song) {
+  addSong(Song song) async {
     if (this.songList.indexWhere((songinlist) => songinlist.id == song.id) > -1)
       return;
 
+    Audio audio = Audio.network(
+        song.songUrl,
+        metas: Metas(
+          title: song.name,
+          artist: song.artistsList.join(' '),
+          album: song.album['name']
+        )
+    );
+
+    this._playlist.add(audio);
     this._songList.add(song);
+    print('now list: ${this._songList.map((e) => e.name).join('/')}');
     notifyListeners();
+    song.getPicUrl().then((value) =>
+      audio.updateMetas(
+        image: MetasImage.network(value)
+      )
+    );
+
   }
 
   addSongOrigin(songdata) {
     this.addSong(Song(songdata));
   }
 
-  addList(List<Song> songlist) {
+  addList(List<Song> songlist) async {
     this.cleanList();
     this._songList.addAll(songlist);
+
+    List<Audio> audios = songlist
+      .map((song) => Audio.network(
+        song.songUrl,
+        metas: Metas(
+          title: song.name,
+          artist: song.artistsList.join(' '),
+          album: song.album['name']
+        )
+      ))
+      .toList();
+    this._playlist.addAll(audios);
+    print('now list: ${this._songList.map((e) => e.name).join('/')}');
     notifyListeners();
+
+    Future.wait(songlist.map((song) => song.getPicUrl()))
+    .then((List<String> value)  {
+      value.asMap().forEach((index, url) {
+        audios[index].updateMetas(
+          image: MetasImage.network(url)
+        );
+      });
+    })
+    .catchError((e) {
+      print(e);
+    });
   }
 
   addListOrigin(List<dynamic> songlistdata) {

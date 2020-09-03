@@ -17,7 +17,7 @@ import 'package:provider/provider.dart';
 import './state/state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import './page/search.dart';
-import './components/bottonPlayer.dart';
+import 'components/bottomPlayer.dart';
 
 void main() {
   EasyLoading.instance

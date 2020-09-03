@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../state/state.dart';
 import 'package:provider/provider.dart';
 import 'package:assets_audio_player/assets_audio_player.dart';
+import './bottomSheet.dart';
 
 class BottonPlayer extends StatelessWidget {
   @override
@@ -114,67 +115,8 @@ class BottonPlayer extends StatelessWidget {
                                     : () => showModalBottomSheet(
                                           context: context,
                                           builder: (BuildContext context) {
-                                            StateModel state =
-                                                context.watch<StateModel>();
-
-                                            return Container(
-                                              alignment: Alignment.center,
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  0.4,
-                                              child: ListView.builder(
-                                                  itemCount:
-                                                      state.songList.length,
-                                                  itemBuilder:
-                                                      (BuildContext context,
-                                                          int index) {
-                                                    return ListTile(
-                                                      leading:
-                                                          state.currentIndex ==
-                                                                  index
-                                                              ? Icon(
-                                                                  Icons
-                                                                      .music_note,
-                                                                  color: Theme.of(
-                                                                          context)
-                                                                      .primaryColor,
-                                                                )
-                                                              : SizedBox(),
-                                                      title: Row(
-                                                        children: [
-                                                          Text(
-                                                            state
-                                                                .songList[index]
-                                                                .name,
-                                                            style: TextStyle(
-                                                              color: state.currentIndex ==
-                                                                      index
-                                                                  ? Theme.of(
-                                                                          context)
-                                                                      .primaryColor
-                                                                  : Colors
-                                                                      .black,
-                                                            ),
-                                                          ),
-                                                          Text(''),
-                                                          Text(
-                                                            ' - ${state.songList[index].artistsList.join(' ')}',
-                                                            style: TextStyle(
-                                                                fontSize: 12,
-                                                                color: Colors
-                                                                    .black38),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      onTap: () {
-                                                        state.playSong(state
-                                                            .songList[index]);
-                                                        Navigator.pop(context);
-                                                      },
-                                                    );
-                                                  }),
-                                            );
+                                            StateModel state = context.watch<StateModel>();
+                                            return BottomSheetComponent(state);
                                           },
                                         ),
                               ),
