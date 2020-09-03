@@ -1,14 +1,45 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'dart:ui';
 // import 'dart:developer';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:fluuter_demo/utils/api.dart';
 import 'package:dio/dio.dart';
 import '../state/state.dart';
 import 'package:provider/provider.dart';
+import '../utils/api.dart';
+class PageMy extends StatefulWidget {
 
-class PageMy extends StatelessWidget {
+  @override
+  _PageMyState createState() => _PageMyState();
+}
+
+class _PageMyState extends State<PageMy> {
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      dynamic setMyPlayList = context.read<StateModel>().setMyPlayList;
+      dynamic userInfo = context.read<StateModel>().userInfo;
+      if (userInfo != null) {
+        api().get('/user/playlist?uid=${userInfo['userId']}')
+        .then((res) {
+          if (res.data['code'] == 200) {
+            setMyPlayList(res.data['playlist']);
+          }
+          // debugger();
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    StateModel state = context.watch<StateModel>();
+
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -32,6 +63,115 @@ class PageMy extends StatelessWidget {
                 ]),
           ),
           _MusicList(),
+          state.myPlayList.isNotEmpty ? Row(
+            children: <Widget>[
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 2),
+                  child: AspectRatio(
+                    aspectRatio: 1.0,
+                    child: InkWell(
+                      onTap: () {},
+                      child: Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: NetworkImage(state.myPlayList[0]['coverImgUrl']),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      )
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 2),
+                  child: AspectRatio(
+                    aspectRatio: 1.0,
+                    child: Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                      ),
+                      child: state.myPlayList.getRange(1, 5).length > 0 ? GridView.builder(
+                        physics: NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          childAspectRatio: 1.0,
+                          mainAxisSpacing: 3.0,
+                          crossAxisSpacing: 3.0,
+                        ),
+                        itemCount: state.myPlayList.getRange(1, 5).length,
+                        itemBuilder: (context, index) {
+                          return InkWell(
+                            onTap: () { print('${state.myPlayList.getRange(1, 5).elementAt(index)['name']}'); },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: NetworkImage(state.myPlayList.getRange(1, 5).elementAt(index)['coverImgUrl']),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              child: BackdropFilter(
+                                filter: ImageFilter.blur(sigmaX: 0, sigmaY: 0),
+                                child: Container(
+                                    alignment: Alignment.center,
+                                    color: Colors.grey.withOpacity(0.1),
+                                )
+                              )
+                            ));
+                        },
+                      ) : SizedBox(),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ) : SizedBox(),
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 5),
+            child: GridView.builder(
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                childAspectRatio: 1.0,
+                mainAxisSpacing: 3.0,
+                crossAxisSpacing: 3.0,
+              ),
+              itemCount: 2,
+              itemBuilder: (context, index) {
+                return Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(width: 3.0),
+                  ),
+                );
+              },
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 5),
+            child: GridView.builder(
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                childAspectRatio: 1.0,
+                mainAxisSpacing: 3.0,
+                crossAxisSpacing: 3.0,
+              ),
+              itemCount: 5,
+              itemBuilder: (context, index) {
+                return Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(width: 3.0, color: Colors.blue),
+                  ),
+                );
+              },
+            ),
+          ),
           RaisedButton(
             onPressed: () async {
               print('clicked');

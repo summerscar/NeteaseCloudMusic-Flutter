@@ -21,6 +21,7 @@ class StateModel extends ChangeNotifier {
   String _currentLyric;
   Playlist _playlist = Playlist(audios: []);
   bool playerInited = false;
+  List<dynamic> _myPlayList = [];
 
   StateModel() {
     // init player
@@ -53,6 +54,12 @@ class StateModel extends ChangeNotifier {
   LoopMode get playMode => this._playMode;
   String get currentLyric => this._currentLyric;
   Playlist get playlist => this._playlist;
+  List<dynamic> get myPlayList => this._myPlayList;
+
+  void setMyPlayList (List<dynamic> data) {
+    this._myPlayList = data;
+    notifyListeners();
+  }
 
   void setUserInfo(dynamic userInfo) async {
     final prefs = await SharedPreferences.getInstance();
