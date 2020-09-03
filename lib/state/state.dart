@@ -12,7 +12,7 @@ class StateModel extends ChangeNotifier {
   /// Internal, private state of the cart.
   dynamic _userInfo;
   bool _isPlaying = false;
-  AssetsAudioPlayer _player = AssetsAudioPlayer();
+  AssetsAudioPlayer _player;
   Song _current;
   List<Song> _songList = [];
   String _currentSongPic;
@@ -20,28 +20,12 @@ class StateModel extends ChangeNotifier {
   LoopMode _playMode = LoopMode.playlist; // none
   String _currentLyric;
   Playlist _playlist = Playlist(audios: []);
-  bool playerInited = false;
+  bool playerInited;
   List<dynamic> _myPlayList = [];
 
   StateModel() {
     // init player
-    this._player.current.listen((playingAudio) async {
-      Song cur = this
-          ._songList
-          .firstWhere((song) => song.songUrl == playingAudio.audio.audio.path);
-      this.setCurrentSongInfo(cur);
-      this.setPlaying(true);
-      print('music changed to: ${cur.name}');
-    });
-    this._player.playlistAudioFinished.listen((Playing playing) {
-      this.setPlaying(false);
-    });
-    this._player.playlistFinished.listen((finished) {
-      this.setPlaying(false);
-    });
-    this._player.loopMode.listen((loopMode) {
-      this._playMode = loopMode;
-    });
+    this.initPlayer();
   }
 
   Song get currentSong => _current;
@@ -56,7 +40,7 @@ class StateModel extends ChangeNotifier {
   Playlist get playlist => this._playlist;
   List<dynamic> get myPlayList => this._myPlayList;
 
-  void setMyPlayList (List<dynamic> data) {
+  void setMyPlayList(List<dynamic> data) {
     this._myPlayList = data;
     notifyListeners();
   }
@@ -76,6 +60,34 @@ class StateModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  initPlayer() {
+    if (this._player != null) {
+      this._player.dispose();
+      this._player = null;
+    }
+
+    this._player = AssetsAudioPlayer();
+    this.playerInited = false;
+
+    this._player.current.listen((playingAudio) async {
+      Song cur = this
+          ._songList
+          .firstWhere((song) => song.songUrl == playingAudio.audio.audio.path);
+      this.setCurrentSongInfo(cur);
+      this.setPlaying(true);
+      print('music changed to: ${cur.name}');
+    });
+    this._player.playlistAudioFinished.listen((Playing playing) {
+      this.setPlaying(false);
+    });
+    this._player.playlistFinished.listen((finished) {
+      this.setPlaying(false);
+    });
+    this._player.loopMode.listen((loopMode) {
+      this._playMode = loopMode;
+    });
+  }
+
   pause() {
     this.player.pause();
     this._isPlaying = false;
@@ -91,11 +103,10 @@ class StateModel extends ChangeNotifier {
   }
 
   toggleLoop() {
-    final modeList = [LoopMode.single, LoopMode.playlist, LoopMode.single];
+    final modeList = [LoopMode.single, LoopMode.playlist, LoopMode.none];
     final nowModeIndex = modeList.indexOf(this.player.currentLoopMode);
-    this
-        .player
-        .setLoopMode(modeList[nowModeIndex + 1 > modeList.length ? 0 : nowModeIndex + 1]);
+    this.player.setLoopMode(
+        modeList[nowModeIndex + 1 > modeList.length ? 0 : nowModeIndex + 1]);
   }
 
   next() {
@@ -106,7 +117,7 @@ class StateModel extends ChangeNotifier {
     this.player.previous();
   }
 
-  remove (Song song) {
+  remove(Song song) {
     if (this.songList.length == 1) {
       this.player.stop();
       this._currentIndex = null;
@@ -114,13 +125,13 @@ class StateModel extends ChangeNotifier {
       this._currentLyric = null;
       this._currentSongPic = null;
     }
-    int index =  this.songList.indexOf(song);
+    int index = this.songList.indexOf(song);
     this._songList.removeAt(index);
     this._playlist.removeAtIndex(index);
     notifyListeners();
   }
 
-  removeAll () {
+  removeAll() {
     this.player.stop();
     this.cleanList();
     this._currentIndex = null;
@@ -132,7 +143,6 @@ class StateModel extends ChangeNotifier {
 
   Future playSong(Song song) async {
     try {
-
       // if (!await song.check()) {
       //   throw ('暂无版权无法播放');
       // }
@@ -141,12 +151,11 @@ class StateModel extends ChangeNotifier {
       print('play index: $currentIndex');
 
       if (!playerInited) {
-        this.player.open(
-          this.playlist,
-          autoStart: false,
-          loopMode: LoopMode.playlist,
-          showNotification: true //loop the full playlist
-        );
+        this.player.open(this.playlist,
+            autoStart: false,
+            loopMode: LoopMode.playlist,
+            showNotification: true //loop the full playlist
+            );
         this.playerInited = true;
       }
       this.player.playlistPlayAtIndex(this.currentIndex);
@@ -209,11 +218,10 @@ class StateModel extends ChangeNotifier {
   }
 
   cleanList() {
+    this._player.playlistPlayAtIndex(0);
     this._songList.clear();
-    int audioLength = this._playlist.audios.length;
-    for (int i = audioLength - 1; i > -1 ; i--) {
-        this._playlist.removeAtIndex(i);
-    }
+    this._playlist.audios.clear();
+    this.playerInited = false;
     notifyListeners();
   }
 
@@ -221,25 +229,19 @@ class StateModel extends ChangeNotifier {
     if (this.songList.indexWhere((songinlist) => songinlist.id == song.id) > -1)
       return;
 
-    Audio audio = Audio.network(
-        song.songUrl,
+    Audio audio = Audio.network(song.songUrl,
         metas: Metas(
-          title: song.name,
-          artist: song.artistsList.join(' '),
-          album: song.album['name']
-        )
-    );
+            title: song.name,
+            artist: song.artistsList.join(' '),
+            album: song.album['name']));
 
     this._playlist.add(audio);
     this._songList.add(song);
     print('now list: ${this._songList.map((e) => e.name).join('/')}');
     notifyListeners();
-    song.getPicUrl().then((value) =>
-      audio.updateMetas(
-        image: MetasImage.network(value)
-      )
-    );
-
+    song
+        .getPicUrl()
+        .then((value) => audio.updateMetas(image: MetasImage.network(value)));
   }
 
   addSongOrigin(songdata) {
@@ -247,32 +249,29 @@ class StateModel extends ChangeNotifier {
   }
 
   addList(List<Song> songlist) async {
+    if (this.player.isPlaying.value) {
+      this.player.stop();
+    }
     this.cleanList();
     this._songList.addAll(songlist);
 
     List<Audio> audios = songlist
-      .map((song) => Audio.network(
-        song.songUrl,
-        metas: Metas(
-          title: song.name,
-          artist: song.artistsList.join(' '),
-          album: song.album['name']
-        )
-      ))
-      .toList();
+        .map((song) => Audio.network(song.songUrl,
+            metas: Metas(
+                title: song.name,
+                artist: song.artistsList.join(' '),
+                album: song.album['name'])))
+        .toList();
     this._playlist.addAll(audios);
     print('now list: ${this._songList.map((e) => e.name).join('/')}');
     notifyListeners();
 
     Future.wait(songlist.map((song) => song.getPicUrl()))
-    .then((List<String> value)  {
+        .then((List<String> value) {
       value.asMap().forEach((index, url) {
-        audios[index].updateMetas(
-          image: MetasImage.network(url)
-        );
+        audios[index].updateMetas(image: MetasImage.network(url));
       });
-    })
-    .catchError((e) {
+    }).catchError((e) {
       print(e);
     });
   }
