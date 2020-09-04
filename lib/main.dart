@@ -8,11 +8,11 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
-import 'package:fluuter_demo/page/my.dart';
-import 'package:fluuter_demo/components/drawer.dart';
+import './page/my.dart';
+import './components/drawer.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:fluuter_demo/page/login.dart';
-import 'package:fluuter_demo/page/player.dart';
+import './page/login.dart';
+import './page/player.dart';
 import 'package:provider/provider.dart';
 import './state/state.dart';
 import 'package:shared_preferences/shared_preferences.dart';

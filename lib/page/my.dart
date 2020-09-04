@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'dart:ui';
 // import 'dart:developer';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:fluuter_demo/utils/api.dart';
 import 'package:dio/dio.dart';
 import '../state/state.dart';
 import 'package:provider/provider.dart';

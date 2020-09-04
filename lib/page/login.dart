@@ -5,7 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:fluuter_demo/utils/api.dart';
+import '../utils/api.dart';
 import 'package:provider/provider.dart';
 import '../state/state.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';

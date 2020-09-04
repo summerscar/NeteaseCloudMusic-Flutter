@@ -1,4 +1,4 @@
-package com.example.fluuter_demo
+package com.example.neteasemusic_flutter
 
 import io.flutter.embedding.android.FlutterActivity
 
