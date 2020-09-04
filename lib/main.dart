@@ -18,7 +18,7 @@ import './state/state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import './page/search.dart';
 import 'components/bottomPlayer.dart';
-
+import './page/explorer.dart';
 void main() {
   EasyLoading.instance
     ..displayDuration = const Duration(milliseconds: 2000)
@@ -103,9 +103,7 @@ class MyHomePage extends StatelessWidget {
           body: TabBarView(
             children: [
               PageMy(),
-              Center(
-                child: Text('发现'),
-              ),
+              ExplorerPage(),
             ],
           ),
           bottomNavigationBar: BottonPlayer(),

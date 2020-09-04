@@ -50,6 +50,7 @@ class StateModel extends ChangeNotifier {
 
     if (userInfo == null) {
       print('remove storage: userInfo');
+      _myPlayList = null;
       prefs.remove('userInfo');
     } else {
       print('set storage: userInfo');
@@ -219,6 +220,9 @@ class StateModel extends ChangeNotifier {
   }
 
   cleanList() {
+    if (this._player.isPlaying.value) {
+      this._player.stop();
+    }
     this._songList.clear();
     this._playlist.audios.clear();
     this.playerInited = false;

@@ -54,7 +54,7 @@ class _PlayerPageState extends State<StatefulWidget>
               filter: ImageFilter.blur(sigmaX: 30.0, sigmaY: 30.0),
               child: Container(
                   alignment: Alignment.center,
-                  color: Colors.grey.withOpacity(0.1),
+                  color: Colors.grey[600].withOpacity(0.1),
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
