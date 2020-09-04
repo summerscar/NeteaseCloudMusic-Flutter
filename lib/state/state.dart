@@ -7,7 +7,7 @@ import '../song/song.dart';
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:math';
-
+import '../utils/api.dart';
 class StateModel extends ChangeNotifier {
   /// Internal, private state of the cart.
   dynamic _userInfo;
@@ -22,6 +22,8 @@ class StateModel extends ChangeNotifier {
   Playlist _playlist = Playlist(audios: []);
   bool playerInited;
   List<dynamic> _myPlayList = [];
+  List<dynamic> _recommendPlayList = [];
+  List<int> _likeList = [];
 
   StateModel() {
     // init player
@@ -39,9 +41,15 @@ class StateModel extends ChangeNotifier {
   String get currentLyric => this._currentLyric;
   Playlist get playlist => this._playlist;
   List<dynamic> get myPlayList => this._myPlayList;
+  List<dynamic> get recommendPlayList => this._recommendPlayList;
+  List<int> get likeList => this._likeList;
 
   void setMyPlayList(List<dynamic> data) {
     this._myPlayList = data;
+    notifyListeners();
+  }
+  void setRecommendPlayList(List<dynamic> data) {
+    this._recommendPlayList = data;
     notifyListeners();
   }
 
@@ -57,7 +65,27 @@ class StateModel extends ChangeNotifier {
       prefs.setString('userInfo', jsonEncode(userInfo));
     }
     _userInfo = userInfo;
+    if (userInfo != null) this.refreshLikeList();
+
     // This call tells the widgets that are listening to this model to rebuild.
+    notifyListeners();
+  }
+
+  void refreshLikeList () {
+    api().get('/likelist?uid=${this._userInfo['userId']}')
+    .then((value) {
+      List<dynamic> ids = value.data['ids'];
+      List<int> intList = ids.map((s) => s as int).toList();
+      this._likeList.addAll(intList);
+      notifyListeners();
+    });
+  }
+  void setLikeList (bool isAdd, int id) {
+    if (isAdd) {
+      this._likeList.add(id);
+    } else {
+      this._likeList.remove(id);
+    }
     notifyListeners();
   }
 

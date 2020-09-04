@@ -6,7 +6,7 @@ import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter_lyric/lyric_util.dart';
 import 'package:flutter_lyric/lyric_widget.dart';
 import '../components/bottomSheet.dart';
-
+import '../utils//api.dart';
 class PlayerPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _PlayerPageState();
@@ -38,6 +38,12 @@ class _PlayerPageState extends State<StatefulWidget>
                 icon: Icon(Icons.arrow_back_ios),
                 onPressed: () => Navigator.pushNamed(context, '/'))),
       );
+    }
+    void _likeMusic (int id, bool islike) {
+      api().get('/like?id=$id&like=${islike ? 'true' : 'false'}')
+      .then((value) {
+        state.setLikeList(islike, id);
+      });
     }
 
     return Scaffold(
@@ -111,12 +117,14 @@ class _PlayerPageState extends State<StatefulWidget>
                                           ))),
                                           IconButton(
                                               icon: Icon(
-                                                Icons.favorite_border,
+                                                state.likeList.contains(state.currentSong.id) ? Icons.favorite : Icons.favorite_border,
                                                 color: Colors.white
                                                     .withOpacity(0.75),
                                                 size: 20,
                                               ),
-                                              onPressed: () => {})
+                                              onPressed: () => {
+                                                _likeMusic(state.currentSong.id, !state.likeList.contains(state.currentSong.id))
+                                              })
                                         ])),
                                 Text(
                                   state.currentSong.artistsList.join(' '),
