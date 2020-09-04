@@ -60,7 +60,11 @@ class Song {
     Response res = await api().get('/lyric?id=${this.id}');
     dynamic lrc = res.data['lrc'];
     if (lrc != null) {
-      this.lyric = res.data['lrc']['lyric'];
+      String lyric = res.data['lrc']['lyric'];
+      if (!lyric.contains(RegExp(r'\[.*\]'))) {
+        lyric = null;
+      }
+      this.lyric = lyric;
       return this.lyric;
     }
     return null;

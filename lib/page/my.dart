@@ -23,8 +23,9 @@ class _PageMyState extends State<PageMy> {
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       dynamic setMyPlayList = context.read<StateModel>().setMyPlayList;
+      List<dynamic> myPlayList = context.read<StateModel>().myPlayList;
       dynamic userInfo = context.read<StateModel>().userInfo;
-      if (userInfo != null) {
+      if (userInfo != null && myPlayList.isEmpty) {
         api().get('/user/playlist?uid=${userInfo['userId']}').then((res) {
           if (res.data['code'] == 200) {
             setMyPlayList(res.data['playlist']);
