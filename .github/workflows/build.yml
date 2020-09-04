@@ -14,14 +14,22 @@ jobs:
         java-version: '12.x'
     - uses: subosito/flutter-action@v1
       with:
-        flutter-version: '1.20.2'
+        channel: beta
+    - run: flutter config --enable-web
     - run: flutter pub get
     - run: flutter build apk
+    - run: flutter build web
+
+    - name: Deploy
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./build/web
 
     - uses: "marvinpinto/action-automatic-releases@latest"
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        automatic_release_tag: "latest"
+        automatic_release_tag: ${{ github.sha }}
         title: ${{ github.sha }}
         prerelease: false
         files: |
