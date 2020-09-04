@@ -55,7 +55,9 @@ class MyApp extends StatelessWidget {
             child: MyHomePage(),
           ),
       "player": (context) => FlutterEasyLoading(child: PlayerPage()),
-    }, initialRoute: '/', theme: ThemeData(primarySwatch: Colors.red));
+    }, initialRoute: '/', theme: ThemeData(primarySwatch: Colors.red),
+    title: '网易云音乐-Flutter',
+    );
   }
 }
 

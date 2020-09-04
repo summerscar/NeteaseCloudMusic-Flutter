@@ -120,8 +120,14 @@ class _ExplorerPageState extends State<ExplorerPage> {
               crossAxisSpacing: 3.0,
             ),
             children: [
-              state.userInfo != null ? InkWell(
-                  onTap: _getRecommendSongs,
+              InkWell(
+                  onTap: () {
+                    if (state.userInfo != null) {
+                      _getRecommendSongs();
+                    } else {
+                      Navigator.pushNamed(context, '/');
+                    }
+                  },
                   child: Container(
                     decoration: BoxDecoration(
                       color: Colors.grey[200],
@@ -150,7 +156,7 @@ class _ExplorerPageState extends State<ExplorerPage> {
                         )
                       ]
                     ),
-                  )) : SizedBox(),
+                  )),
                   InkWell(
                   onTap: () {
                     _getTopMusic(0, '全站飙升榜');
