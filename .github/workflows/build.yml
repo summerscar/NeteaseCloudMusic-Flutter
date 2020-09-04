@@ -27,11 +27,19 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./build/web
 
+    - uses: benjlevesque/short-sha@v1.1
+      id: short-sha
+      with:
+        length: 6
+    - run: echo $SHA
+      env:
+        SHA: ${{ steps.short-sha.outputs.sha }}
+
     - uses: "marvinpinto/action-automatic-releases@latest"
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        automatic_release_tag: ${{ github.sha }}
-        title: ${{ github.sha }}
+        automatic_release_tag: ${{ env.SHA }}
+        title: ${{ env.SHA }}
         prerelease: false
         files: |
           build/app/outputs/flutter-apk/*.apk
