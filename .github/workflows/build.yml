@@ -19,6 +19,7 @@ jobs:
     - run: flutter pub get
     - run: flutter build apk
     - run: flutter build web
+    - run: zip -r web.zip ./build/web
 
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v3
@@ -34,3 +35,4 @@ jobs:
         prerelease: false
         files: |
           build/app/outputs/flutter-apk/*.apk
+          web.zip
