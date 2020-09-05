@@ -99,7 +99,7 @@ class _ExplorerPageState extends State<ExplorerPage> {
             builder: (context) {
               return MusicListPage(
                 list: list,
-                title: '音乐列表',
+                title: title,
               );
             },
           ),

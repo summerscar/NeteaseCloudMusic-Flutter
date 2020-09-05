@@ -1,16 +1,45 @@
 # 网易云音乐 Flutter
 
-A new Flutter project.
+http://summerscar.me/NeteaseCloudMusic-Flutter/
 
-## Getting Started
+## Backend
+* [NeteaseCloudMusicApi](https://binaryify.github.io/NeteaseCloudMusicApi)
+* [leancloud](https://leancloud.app/)
 
-This project is a starting point for a Flutter application.
+## Support platform 
+* Web
+* Android
+* IOS - Not tested
+* Widnows - Not tested
+* Linux - Not tested
+* MacOS - Not tested
 
-A few resources to get you started if this is your first Flutter project:
+## Done
+* 用户歌单
+* 每日推荐
+* 排行榜
+* 搜索音乐
+* 收藏至歌单
+* ❤ 音乐
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Todo
+* 搜索历史
+* 私人电台
+* 歌单音乐删除
+* ......
+
+## Preview
+![](preview/00.jpg)
+![](preview/01.jpg)
+![](preview/02.jpg)
+![](preview/03.jpg)
+![](preview/04.jpg)
+
+## Reference
+* [gallery](https://github.com/flutter/gallery)
+* [flutter_catalog](https://github.com/X-Wei/flutter_catalog)
+* [flutterchina](https://flutterchina.club/)
+* [flutter.cn](https://flutter.cn/)
+* [flutlab.io](https://flutlab.io/)
+
