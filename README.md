@@ -1,6 +1,6 @@
 # 网易云音乐 Flutter
 
-http://summerscar.me/NeteaseCloudMusic-Flutter/
+https://summerscar.me/NeteaseCloudMusic-Flutter/
 
 ## Backend
 * [NeteaseCloudMusicApi](https://binaryify.github.io/NeteaseCloudMusicApi)
