@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import '../state/state.dart';
 import 'package:provider/provider.dart';
@@ -35,17 +36,10 @@ class BottonPlayer extends StatelessWidget {
                 height: 55,
                 width: 55,
                 child: state.currentSongPic != null
-                    ? Image.network(
-                        state.currentSongPic,
-                        loadingBuilder: (BuildContext context, Widget child,
-                            ImageChunkEvent loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return Container(
-                              decoration: new BoxDecoration(
-                                  color: Theme.of(context)
-                                      .scaffoldBackgroundColor),
-                              width: 55,
-                              height: 55);
+                    ? CachedNetworkImage(
+                        imageUrl: state.currentSongPic,
+                        placeholder: (BuildContext context, url) {
+                          return CircularProgressIndicator();
                         },
                       )
                     : SizedBox(),

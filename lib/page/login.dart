@@ -56,8 +56,15 @@ class _MainView extends StatelessWidget {
   final TextEditingController passwordController;
 
   void _login(BuildContext context) async {
-    EasyLoading.show();
-
+    Fluttertoast.showToast(
+        msg: "登录中……",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Theme.of(context).primaryColor,
+        textColor: Colors.white,
+        webPosition: 'center',
+        fontSize: 14.0);
     String url;
     if (usernameController.text.contains('@')) {
       url =
@@ -66,7 +73,6 @@ class _MainView extends StatelessWidget {
       url =
           '/login/cellphone?phone=${usernameController.text.trim()}&password=${passwordController.text.trim()}';
     } else {
-      EasyLoading.dismiss();
       Fluttertoast.showToast(
           msg: "用户名/手机格式有误",
           toastLength: Toast.LENGTH_SHORT,
@@ -93,7 +99,6 @@ class _MainView extends StatelessWidget {
         EasyLoading.dismiss();
         Navigator.of(context).pushNamed('/');
       } else {
-        EasyLoading.dismiss();
         Fluttertoast.showToast(
             msg: response.data['msg'],
             toastLength: Toast.LENGTH_SHORT,
@@ -106,7 +111,6 @@ class _MainView extends StatelessWidget {
         print(response.data);
       }
     } catch (e) {
-      EasyLoading.dismiss();
       print(e);
     }
   }

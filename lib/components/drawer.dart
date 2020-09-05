@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../state/state.dart';
@@ -12,7 +13,8 @@ class ComponentDrawer extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 35,
-            backgroundImage: NetworkImage(state.userInfo['avatarUrl']),
+            backgroundImage:
+                CachedNetworkImageProvider(state.userInfo['avatarUrl']),
           ),
           SizedBox(height: 20),
           Text(state.userInfo['nickname'],
@@ -34,60 +36,59 @@ class ComponentDrawer extends StatelessWidget {
   }
 
   List<ListTile> _drawerList(context, state) {
-
-    _showBottomSheet () {
-       showBottomSheet<String>(
-            context: context,
-            builder: (BuildContext context) => Container(
-              decoration: BoxDecoration(
-                border: Border(top: BorderSide(color: Colors.black12)),
+    _showBottomSheet() {
+      showBottomSheet<String>(
+        context: context,
+        builder: (BuildContext context) => Container(
+          decoration: BoxDecoration(
+            border: Border(top: BorderSide(color: Colors.black12)),
+          ),
+          child: ListView(
+            shrinkWrap: true,
+            primary: false,
+            children: <Widget>[
+              ListTile(
+                dense: true,
+                title: Text('网易云音乐 Flutter'),
               ),
-              child: ListView(
-                shrinkWrap: true,
-                primary: false,
-                children: <Widget>[
-                  ListTile(
-                    dense: true,
-                    title: Text('网易云音乐 Flutter'),
-                  ),
-                  ListTile(
-                    dense: true,
-                    title: RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            style: TextStyle(color: Colors.black),
-                            text: 'by ',
-                          ),
-                          TextSpan(
-                            style: TextStyle(color: Colors.blue[300]),
-                            text: 'summerscar',
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () async {
-                                String url = 'https://github.com/summerscar';
-                                if (await canLaunch(url)) {
-                                  await launch(url);
-                                } else {
-                                  throw 'Could not launch $url';
-                                }
-                              },
-                          ),
-                        ],
+              ListTile(
+                dense: true,
+                title: RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        style: TextStyle(color: Colors.black),
+                        text: 'by ',
                       ),
-                    ),
-                  ),
-                  ButtonBar(
-                    children: <Widget>[
-                      FlatButton(
-                        child: const Text('OK'),
-                        onPressed: () => Navigator.pop(context),
+                      TextSpan(
+                        style: TextStyle(color: Colors.blue[300]),
+                        text: 'summerscar',
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () async {
+                            String url = 'https://github.com/summerscar';
+                            if (await canLaunch(url)) {
+                              await launch(url);
+                            } else {
+                              throw 'Could not launch $url';
+                            }
+                          },
                       ),
                     ],
                   ),
+                ),
+              ),
+              ButtonBar(
+                children: <Widget>[
+                  FlatButton(
+                    child: const Text('OK'),
+                    onPressed: () => Navigator.pop(context),
+                  ),
                 ],
               ),
-            ),
-          );
+            ],
+          ),
+        ),
+      );
     }
 
     if (state.userInfo != null) {

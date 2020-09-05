@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import './musicList.dart';
@@ -13,13 +14,14 @@ class ExplorerPage extends StatefulWidget {
 }
 
 class _ExplorerPageState extends State<ExplorerPage> {
-
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Function setRecommendPlayList = context.read<StateModel>().setRecommendPlayList;
-      List<dynamic> recommendPlayList = context.read<StateModel>().recommendPlayList;
+      Function setRecommendPlayList =
+          context.read<StateModel>().setRecommendPlayList;
+      List<dynamic> recommendPlayList =
+          context.read<StateModel>().recommendPlayList;
       dynamic userInfo = context.read<StateModel>().userInfo;
       if (userInfo != null && recommendPlayList.isEmpty) {
         api().get('/recommend/resource').then((res) {
@@ -35,7 +37,7 @@ class _ExplorerPageState extends State<ExplorerPage> {
   Widget build(BuildContext context) {
     StateModel state = context.watch<StateModel>();
 
-    String _getNum2String (weekday) {
+    String _getNum2String(weekday) {
       List<String> list = ['', '一', '二', '三', '四', '五', '六', '日'];
       return list[weekday];
     }
@@ -81,6 +83,7 @@ class _ExplorerPageState extends State<ExplorerPage> {
         return e;
       });
     }
+
     void _getTopMusic(int type, String title) async {
       List<dynamic> list;
 
@@ -132,84 +135,76 @@ class _ExplorerPageState extends State<ExplorerPage> {
                     decoration: BoxDecoration(
                       color: Colors.grey[200],
                     ),
-                    child: Column(
-                      children: [
-                        Container(
+                    child: Column(children: [
+                      Container(
                           height: 40,
                           decoration: BoxDecoration(
                             color: Colors.red,
                           ),
                           child: Center(
-                            child: Text(
-                              '星期${_getNum2String(DateTime.now().weekday)}',
-                              style: TextStyle(color: Colors.white),
-                            )
-                          )
-                        ),
-                        Expanded(
+                              child: Text(
+                            '星期${_getNum2String(DateTime.now().weekday)}',
+                            style: TextStyle(color: Colors.white),
+                          ))),
+                      Expanded(
                           child: Center(
-                            child: Text(
-                              DateTime.now().day.toString(),
-                              style: TextStyle(color: Colors.black87, fontSize: 45),
-                            )
-                          )
-                        )
-                      ]
-                    ),
+                              child: Text(
+                        DateTime.now().day.toString(),
+                        style: TextStyle(color: Colors.black87, fontSize: 45),
+                      )))
+                    ]),
                   )),
-                  InkWell(
+              InkWell(
                   onTap: () {
                     _getTopMusic(0, '全站飙升榜');
                   },
                   child: Container(
                     decoration: BoxDecoration(
-                      image: DecorationImage(image: AssetImage('assets/images/top.jpg'), fit: BoxFit.cover,)
-                    ),
+                        image: DecorationImage(
+                      image: AssetImage('assets/images/top.jpg'),
+                      fit: BoxFit.cover,
+                    )),
                   )),
-                  InkWell(
+              InkWell(
                   onTap: () {
                     _getTopMusic(8, '日语榜');
                   },
                   child: Container(
                     decoration: BoxDecoration(
-                      image: DecorationImage(image: AssetImage('assets/images/top-jp.jpg'), fit: BoxFit.cover)
-                    ),
+                        image: DecorationImage(
+                            image: AssetImage('assets/images/top-jp.jpg'),
+                            fit: BoxFit.cover)),
                   )),
-                  ...state.recommendPlayList.map((playList) => InkWell(
-                    onTap: () {
-                      _musicListClickHandler(playList);
-                    },
-                    child: Container(
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: NetworkImage(playList[
-                                'picUrl']),
-                            fit: BoxFit.cover,
+              ...state.recommendPlayList
+                  .map((playList) => InkWell(
+                      onTap: () {
+                        _musicListClickHandler(playList);
+                      },
+                      child: Container(
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: CachedNetworkImageProvider(
+                                  playList['picUrl']),
+                              fit: BoxFit.cover,
+                            ),
                           ),
-                        ),
-                        child: BackdropFilter(
-                            filter: ImageFilter.blur(
-                                sigmaX: 0, sigmaY: 0),
-                            child: Container(
-                              alignment:
-                                  Alignment.bottomLeft,
-                              color: Colors.black
-                                  .withOpacity(0.4),
-                              child: Padding(
-                                padding:
-                                    EdgeInsets.only(bottom: 6, left: 5),
-                                child: Text(
-                                  playList['name'],
-                                  maxLines: 1,
-                                  overflow:
-                                      TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                      color: Colors.white
-                                          .withOpacity(
-                                              0.8)),
+                          child: BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 0, sigmaY: 0),
+                              child: Container(
+                                alignment: Alignment.bottomLeft,
+                                color: Colors.black.withOpacity(0.4),
+                                child: Padding(
+                                  padding: EdgeInsets.only(bottom: 6, left: 5),
+                                  child: Text(
+                                    playList['name'],
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                        color: Colors.white.withOpacity(0.8)),
+                                  ),
                                 ),
-                              ),
-                            ))))).toList()
+                              )))))
+                  .toList()
             ],
           ),
         ),

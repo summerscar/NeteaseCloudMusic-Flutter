@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'dart:ui';
+import 'package:cached_network_image/cached_network_image.dart';
 // import 'dart:developer';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:dio/dio.dart';
@@ -62,17 +63,19 @@ class _PageMyState extends State<PageMy> {
     return SingleChildScrollView(
       child: Column(
         children: [
-          state.myPlayList.isEmpty ? Container(
-            padding: EdgeInsets.only(top: 40),
-            child: Center(
-              child: RaisedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, 'login');
-                },
-                child: Text('登录'),
-              ),
-            ),
-          ) : SizedBox(),
+          state.myPlayList.isEmpty
+              ? Container(
+                  padding: EdgeInsets.only(top: 40),
+                  child: Center(
+                    child: RaisedButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, 'login');
+                      },
+                      child: Text('登录'),
+                    ),
+                  ),
+                )
+              : SizedBox(),
           state.myPlayList.isNotEmpty
               ? Row(
                   children: <Widget>[
@@ -89,7 +92,7 @@ class _PageMyState extends State<PageMy> {
                                 width: double.infinity,
                                 decoration: BoxDecoration(
                                   image: DecorationImage(
-                                    image: NetworkImage(
+                                    image: CachedNetworkImageProvider(
                                         state.myPlayList[0]['coverImgUrl']),
                                     fit: BoxFit.cover,
                                   ),
@@ -130,11 +133,13 @@ class _PageMyState extends State<PageMy> {
                                           child: Container(
                                               decoration: BoxDecoration(
                                                 image: DecorationImage(
-                                                  image: NetworkImage(state
-                                                          .myPlayList
-                                                          .getRange(1, 5)
-                                                          .elementAt(index)[
-                                                      'coverImgUrl']),
+                                                  image:
+                                                      CachedNetworkImageProvider(
+                                                          state.myPlayList
+                                                                  .getRange(1, 5)
+                                                                  .elementAt(
+                                                                      index)[
+                                                              'coverImgUrl']),
                                                   fit: BoxFit.cover,
                                                 ),
                                               ),
@@ -147,16 +152,16 @@ class _PageMyState extends State<PageMy> {
                                                     color: Colors.black
                                                         .withOpacity(0.4),
                                                     child: Padding(
-                                                      padding:
-                                                          EdgeInsets.only(bottom: 6, left: 5),
+                                                      padding: EdgeInsets.only(
+                                                          bottom: 6, left: 5),
                                                       child: Text(
                                                         state.myPlayList
                                                             .getRange(1, 5)
                                                             .elementAt(
                                                                 index)['name'],
                                                         maxLines: 1,
-                                                        overflow:
-                                                            TextOverflow.ellipsis,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
                                                         style: TextStyle(
                                                             color: Colors.white
                                                                 .withOpacity(
@@ -174,67 +179,66 @@ class _PageMyState extends State<PageMy> {
                   ],
                 )
               : SizedBox(),
-          state.myPlayList.isNotEmpty && state.myPlayList.getRange(5, state.myPlayList.length).length > 0 ?
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 2),
-            child: GridView.builder(
-              physics: NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                childAspectRatio: 1.0,
-                mainAxisSpacing: 3.0,
-                crossAxisSpacing: 3.0,
-              ),
-              itemCount: state.myPlayList.getRange(5, state.myPlayList.length).length,
-              itemBuilder: (context, index) {
-                return InkWell(
-                    onTap: () {
-                      _musicListClickHandler(state
-                          .myPlayList
-                          .getRange(5, state.myPlayList.length)
-                          .elementAt(index));
-                    },
-                    child: Container(
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: NetworkImage(state
-                                    .myPlayList
-                                    .getRange(5, state.myPlayList.length)
-                                    .elementAt(index)[
-                                'coverImgUrl']),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        child: BackdropFilter(
-                            filter: ImageFilter.blur(
-                                sigmaX: 0, sigmaY: 0),
-                            child: Container(
-                              alignment:
-                                  Alignment.bottomLeft,
-                              color: Colors.black
-                                  .withOpacity(0.4),
-                              child: Padding(
-                                padding:
-                                    EdgeInsets.only(bottom: 6, left: 5),
-                                child: Text(
-                                  state.myPlayList
+          state.myPlayList.isNotEmpty &&
+                  state.myPlayList.getRange(5, state.myPlayList.length).length >
+                      0
+              ? Container(
+                  padding: const EdgeInsets.symmetric(vertical: 2),
+                  child: GridView.builder(
+                    physics: NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      childAspectRatio: 1.0,
+                      mainAxisSpacing: 3.0,
+                      crossAxisSpacing: 3.0,
+                    ),
+                    itemCount: state.myPlayList
+                        .getRange(5, state.myPlayList.length)
+                        .length,
+                    itemBuilder: (context, index) {
+                      return InkWell(
+                          onTap: () {
+                            _musicListClickHandler(state.myPlayList
+                                .getRange(5, state.myPlayList.length)
+                                .elementAt(index));
+                          },
+                          child: Container(
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: CachedNetworkImageProvider(state
+                                      .myPlayList
                                       .getRange(5, state.myPlayList.length)
-                                      .elementAt(
-                                          index)['name'],
-                                  maxLines: 1,
-                                  overflow:
-                                      TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                      color: Colors.white
-                                          .withOpacity(
-                                              0.8)),
+                                      .elementAt(index)['coverImgUrl']),
+                                  fit: BoxFit.cover,
                                 ),
                               ),
-                            ))));
-              },
-            ),
-          ) : SizedBox(),
+                              child: BackdropFilter(
+                                  filter:
+                                      ImageFilter.blur(sigmaX: 0, sigmaY: 0),
+                                  child: Container(
+                                    alignment: Alignment.bottomLeft,
+                                    color: Colors.black.withOpacity(0.4),
+                                    child: Padding(
+                                      padding:
+                                          EdgeInsets.only(bottom: 6, left: 5),
+                                      child: Text(
+                                        state.myPlayList
+                                            .getRange(
+                                                5, state.myPlayList.length)
+                                            .elementAt(index)['name'],
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                            color:
+                                                Colors.white.withOpacity(0.8)),
+                                      ),
+                                    ),
+                                  ))));
+                    },
+                  ),
+                )
+              : SizedBox(),
           // Image.asset('assets/images/avatar.jpg'),
           // Image.asset('assets/images/avatar.jpg'),
           // Image.asset('assets/images/avatar.jpg')

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import '../state/state.dart';
 import 'package:provider/provider.dart';
@@ -7,6 +8,8 @@ import 'package:flutter_lyric/lyric_util.dart';
 import 'package:flutter_lyric/lyric_widget.dart';
 import '../components/bottomSheet.dart';
 import '../utils//api.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
 class PlayerPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _PlayerPageState();
@@ -39,10 +42,49 @@ class _PlayerPageState extends State<StatefulWidget>
                 onPressed: () => Navigator.pushNamed(context, '/'))),
       );
     }
-    void _likeMusic (int id, bool islike) {
-      api().get('/like?id=$id&like=${islike ? 'true' : 'false'}')
-      .then((value) {
+    void _likeMusic(int id, bool islike) {
+      api().get('/like?id=$id&like=${islike ? 'true' : 'false'}').then((value) {
         state.setLikeList(islike, id);
+      });
+    }
+
+    void _addTolist() {
+      showDialog<int>(
+        context: context,
+        builder: (BuildContext context) => SimpleDialog(
+          title: Text('收藏到歌单'),
+          children: state.myPlayList
+              .where((list) => list['subscribed'] == false)
+              .map((list) => ListTile(
+                    leading: CircleAvatar(
+                      backgroundImage: CachedNetworkImageProvider(list[
+                          'coverImgUrl']), // no matter how big it is, it won't overflow
+                    ),
+                    title: Text(list['name']),
+                    onTap: () => Navigator.pop(context, list['id']),
+                  ))
+              .toList(),
+        ),
+      ).then((returnVal) {
+        if (returnVal != null) {
+          print(returnVal);
+          api()
+              .get(
+                  '/playlist/tracks?op=add&pid=$returnVal&tracks=${state.currentSong.id}')
+              .then((value) {
+            if (value.data['status'] == 200) {
+              Fluttertoast.showToast(
+                  msg: "添加成功",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: Theme.of(context).primaryColor,
+                  textColor: Colors.white,
+                  webPosition: 'center',
+                  fontSize: 14.0);
+            }
+          });
+        }
       });
     }
 
@@ -52,7 +94,7 @@ class _PlayerPageState extends State<StatefulWidget>
                 ? BoxDecoration(color: Colors.grey[300])
                 : BoxDecoration(
                     image: DecorationImage(
-                      image: NetworkImage(state.currentSongPic),
+                      image: CachedNetworkImageProvider(state.currentSongPic),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -72,7 +114,10 @@ class _PlayerPageState extends State<StatefulWidget>
                                     width: MediaQuery.of(context).size.width,
                                     height: MediaQuery.of(context).size.width,
                                   )
-                                : Image.network(state.currentSongPic),
+                                : CachedNetworkImage(
+                                    imageUrl: state.currentSongPic,
+                                    placeholder: (BuildContext context, url) =>
+                                        CircularProgressIndicator()),
                             IconButton(
                                 padding: EdgeInsets.only(
                                     top: MediaQuery.of(context).padding.top),
@@ -102,7 +147,7 @@ class _PlayerPageState extends State<StatefulWidget>
                                                     .withOpacity(0.75),
                                                 size: 20,
                                               ),
-                                              onPressed: () => {}),
+                                              onPressed: _addTolist),
                                           Expanded(
                                               child: Center(
                                                   child: Text(
@@ -117,14 +162,22 @@ class _PlayerPageState extends State<StatefulWidget>
                                           ))),
                                           IconButton(
                                               icon: Icon(
-                                                state.likeList.contains(state.currentSong.id) ? Icons.favorite : Icons.favorite_border,
+                                                state.likeList.contains(
+                                                        state.currentSong.id)
+                                                    ? Icons.favorite
+                                                    : Icons.favorite_border,
                                                 color: Colors.white
                                                     .withOpacity(0.75),
                                                 size: 20,
                                               ),
                                               onPressed: () => {
-                                                _likeMusic(state.currentSong.id, !state.likeList.contains(state.currentSong.id))
-                                              })
+                                                    _likeMusic(
+                                                        state.currentSong.id,
+                                                        !state.likeList
+                                                            .contains(state
+                                                                .currentSong
+                                                                .id))
+                                                  })
                                         ])),
                                 Text(
                                   state.currentSong.artistsList.join(' '),
