@@ -54,6 +54,8 @@ class _PageMyState extends State<PageMy> {
             return MusicListPage(
               list: tracks,
               title: musiclist['name'],
+              id: musiclist['id'],
+              canDel: !musiclist['subscribed'],
             );
           },
         ),
