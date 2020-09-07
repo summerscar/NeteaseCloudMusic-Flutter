@@ -23,6 +23,11 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -97,7 +102,7 @@ class _MainView extends StatelessWidget {
         Provider.of<StateModel>(context, listen: false)
             .setUserInfo(userDetail.data['profile']);
         EasyLoading.dismiss();
-        Navigator.of(context).pushNamed('/');
+        Navigator.of(context).pushReplacementNamed('/');
       } else {
         Fluttertoast.showToast(
             msg: response.data['msg'],

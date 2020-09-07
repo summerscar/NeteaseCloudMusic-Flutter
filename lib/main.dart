@@ -19,6 +19,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import './page/search.dart';
 import 'components/bottomPlayer.dart';
 import './page/explorer.dart';
+import 'package:move_to_background/move_to_background.dart';
+
 void main() {
   EasyLoading.instance
     ..displayDuration = const Duration(milliseconds: 2000)
@@ -49,14 +51,20 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     _initState(context);
 
-    return MaterialApp(routes: {
-      "login": (context) => FlutterEasyLoading(child: LoginPage()),
-      "/": (context) => FlutterEasyLoading(
-            child: MyHomePage(),
-          ),
-      "player": (context) => FlutterEasyLoading(child: PlayerPage()),
-    }, initialRoute: '/', theme: ThemeData(primarySwatch: Colors.red),
-    title: '网易云音乐-Flutter',
+    return WillPopScope(
+      child: MaterialApp(routes: {
+        "login": (context) => FlutterEasyLoading(child: LoginPage()),
+        "/": (context) => FlutterEasyLoading(
+              child: MyHomePage(),
+            ),
+        "player": (context) => FlutterEasyLoading(child: PlayerPage()),
+      }, initialRoute: '/', theme: ThemeData(primarySwatch: Colors.red),
+        title: '网易云音乐-Flutter',
+      ),
+      onWillPop: () async {
+        MoveToBackground.moveTaskToBack();
+        return false;
+      },
     );
   }
 }

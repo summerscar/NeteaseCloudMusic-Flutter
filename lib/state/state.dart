@@ -58,7 +58,7 @@ class StateModel extends ChangeNotifier {
 
     if (userInfo == null) {
       print('remove storage: userInfo');
-      _myPlayList = null;
+      _myPlayList = [];
       prefs.remove('userInfo');
     } else {
       print('set storage: userInfo');
