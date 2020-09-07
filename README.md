@@ -2,17 +2,15 @@
 
 https://summerscar.me/NeteaseCloudMusic-Flutter/
 
+## Download
+
+apk: [download](https://github.com/summerscar/NeteaseCloudMusic-Flutter/releases)
+
+web: [download](https://github.com/summerscar/NeteaseCloudMusic-Flutter/releases)
+
 ## Backend
 * [NeteaseCloudMusicApi](https://binaryify.github.io/NeteaseCloudMusicApi)
 * [leancloud](https://leancloud.app/)
-
-## Support platform 
-* Web
-* Android
-* IOS - Not tested
-* Widnows - Not tested
-* Linux - Not tested
-* MacOS - Not tested
 
 ## Done
 * 用户歌单
@@ -26,8 +24,16 @@ https://summerscar.me/NeteaseCloudMusic-Flutter/
 ## Todo
 * 搜索历史
 * 私人电台
-* 歌单音乐删除
+* ~~歌单音乐删除~~
 * ......
+
+## Support platform
+* Web
+* Android
+* IOS - Not tested
+* Widnows - Not tested
+* Linux - Not tested
+* MacOS - Not tested
 
 ## Preview
 ![](preview/00.jpg)
@@ -42,4 +48,3 @@ https://summerscar.me/NeteaseCloudMusic-Flutter/
 * [flutterchina](https://flutterchina.club/)
 * [flutter.cn](https://flutter.cn/)
 * [flutlab.io](https://flutlab.io/)
-
