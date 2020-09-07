@@ -39,6 +39,7 @@ dependencies:
   flutter_lyric: ^1.0.2
   cached_network_image: 2.3.1
   move_to_background: 1.0.1
+  progress_state_button: ^1.0.1
 
 dev_dependencies:
   flutter_test:

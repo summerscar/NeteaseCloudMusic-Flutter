@@ -10,6 +10,8 @@ import 'package:provider/provider.dart';
 import '../state/state.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:progress_state_button/progress_button.dart';
+import 'package:progress_state_button/iconed_button.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage();
@@ -21,7 +23,20 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  ButtonState nowStatus = ButtonState.idle;
 
+  _LoginPageState() {
+    _usernameController.addListener(() {
+      setState(() {
+        nowStatus = ButtonState.idle;
+      });
+    });
+    _passwordController.addListener(() {
+        setState(() {
+          nowStatus = ButtonState.idle;
+        });
+    });
+  }
   @override
   void initState() {
     super.initState();
@@ -29,6 +44,12 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+
+    void _setStatus (ButtonState status) {
+      setState(() {
+        nowStatus = status;
+      });
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text('登录'),
@@ -37,6 +58,8 @@ class _LoginPageState extends State<LoginPage> {
         child: _MainView(
           usernameController: _usernameController,
           passwordController: _passwordController,
+          nowStatus: nowStatus,
+          setStatus: _setStatus
         ),
       ),
     );
@@ -55,12 +78,17 @@ class _MainView extends StatelessWidget {
     Key key,
     this.usernameController,
     this.passwordController,
+    this.nowStatus,
+    this.setStatus
   }) : super(key: key);
 
   final TextEditingController usernameController;
   final TextEditingController passwordController;
+  final ButtonState nowStatus;
+  final Function setStatus;
 
   void _login(BuildContext context) async {
+    setStatus(ButtonState.loading);
     Fluttertoast.showToast(
         msg: "登录中……",
         toastLength: Toast.LENGTH_SHORT,
@@ -78,6 +106,7 @@ class _MainView extends StatelessWidget {
       url =
           '/login/cellphone?phone=${usernameController.text.trim()}&password=${passwordController.text.trim()}';
     } else {
+      setStatus(ButtonState.fail);
       Fluttertoast.showToast(
           msg: "用户名/手机格式有误",
           toastLength: Toast.LENGTH_SHORT,
@@ -93,6 +122,7 @@ class _MainView extends StatelessWidget {
     try {
       Response response = await api().get(url);
       if (response.data['code'] == 200) {
+        setStatus(ButtonState.success);
         final prefs = await SharedPreferences.getInstance();
         prefs.setString('cookie', response.data['cookie']);
         prefs.setString('token', response.data['token']);
@@ -104,6 +134,7 @@ class _MainView extends StatelessWidget {
         EasyLoading.dismiss();
         Navigator.of(context).pushReplacementNamed('/');
       } else {
+        setStatus(ButtonState.fail);
         Fluttertoast.showToast(
             msg: response.data['msg'],
             toastLength: Toast.LENGTH_SHORT,
@@ -142,6 +173,7 @@ class _MainView extends StatelessWidget {
           onTap: () {
             _login(context);
           },
+          nowStatus: nowStatus
         ),
       ];
     } else {
@@ -157,6 +189,7 @@ class _MainView extends StatelessWidget {
           onTap: () {
             _login(context);
           },
+          nowStatus: nowStatus
         ),
       ];
     }
@@ -238,10 +271,12 @@ class _LoginButton extends StatelessWidget {
     Key key,
     @required this.onTap,
     this.maxWidth,
+    this.nowStatus
   }) : super(key: key);
 
   final double maxWidth;
   final VoidCallback onTap;
+  final ButtonState nowStatus;
 
   @override
   Widget build(BuildContext context) {
@@ -251,14 +286,12 @@ class _LoginButton extends StatelessWidget {
         constraints: BoxConstraints(maxWidth: maxWidth ?? double.infinity),
         padding: const EdgeInsets.symmetric(vertical: 30),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.check_circle_outline),
-            const SizedBox(width: 12),
-            Text('remember me'),
-            const Expanded(child: SizedBox.shrink()),
             _FilledButton(
               text: 'login',
               onTap: onTap,
+              status: nowStatus
             ),
           ],
         ),
@@ -268,27 +301,39 @@ class _LoginButton extends StatelessWidget {
 }
 
 class _FilledButton extends StatelessWidget {
-  const _FilledButton({Key key, @required this.text, @required this.onTap})
-      : super(key: key);
+
+  _FilledButton({@required this.text, @required this.onTap, this.status});
 
   final String text;
   final VoidCallback onTap;
+  final ButtonState status;
 
   @override
   Widget build(BuildContext context) {
-    return FlatButton(
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 24),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+    return Container(
+      child: ProgressButton.icon(iconedButtons: {
+        ButtonState.idle:
+          IconedButton(
+              text: "登录",
+              icon: Icon(Icons.send, color: Colors.white),
+              color: Theme.of(context).primaryColor),
+        ButtonState.loading:
+          IconedButton(
+              text: "Loading",
+              color: Colors.deepPurple.shade700),
+        ButtonState.fail:
+          IconedButton(
+              text: "Failed",
+              icon: Icon(Icons.cancel,color: Colors.white),
+              color: Colors.red.shade300),
+        ButtonState.success:
+          IconedButton(
+              text: "Success",
+              icon: Icon(Icons.check_circle,color: Colors.white,),
+              color: Colors.green.shade400)
+      },
       onPressed: onTap,
-      child: Row(
-        children: [
-          const Icon(Icons.lock),
-          const SizedBox(width: 6),
-          Text(text),
-        ],
-      ),
+      state: this.status ?? ButtonState.idle),
     );
   }
 }
