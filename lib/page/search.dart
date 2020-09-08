@@ -10,10 +10,8 @@ import 'package:provider/provider.dart';
 // SearchDelegate has a member `query` which is the query string.
 class MySearchDelegate extends SearchDelegate<dynamic> {
   StateModel state;
-  final List<String> _history;
   MySearchDelegate(BuildContext context)
-      : _history = <String>['next to you', '芒种', 'Track27', 'world', 'flutter'],
-        state = context.read<StateModel>(),
+      : state = context.read<StateModel>(),
         super();
 
   Future _fetchPosts() async {
@@ -99,10 +97,10 @@ class MySearchDelegate extends SearchDelegate<dynamic> {
 
           return _SuggestionList(
             query: this.query,
-            suggestions: this.query.isEmpty ? _history : post,
+            suggestions: this.query.isEmpty ? Provider.of<StateModel>(context, listen: true).searchHistory : post,
             onSelected: (String suggestion) {
               this.query = suggestion;
-              this._history.insert(0, suggestion);
+              state.addSearchHistory(suggestion);
               showResults(context);
             },
           );
@@ -142,17 +140,28 @@ class _SuggestionList extends StatelessWidget {
   Widget build(BuildContext context) {
     // final textTheme = Theme.of(context).textTheme.subtitle1;
     return ListView.builder(
-        itemCount: suggestions.length,
+        itemCount: query.isEmpty ? suggestions.length + 1 : suggestions.length,
         itemBuilder: (BuildContext context, int i) {
-          final suggestion = suggestions[i];
-          return ListTile(
-            leading: query.isEmpty ? Icon(Icons.history) : SizedBox(width: 0),
-            // Highlight the substring that matched the query.
-            title: Text(query.isEmpty ? suggestion : suggestion['name']),
-            onTap: () {
-              onSelected(query.isEmpty ? suggestion : suggestion['name']);
-            },
-          );
+          dynamic suggestion;
+          if (i == suggestions.length) {
+            return ListTile(
+              title: Center(child: Text('清空历史'),),
+              onTap: () {
+                Provider.of<StateModel>(context, listen: false)
+                  .setSearchHistory([]);
+              },
+            );
+          } else {
+            suggestion = suggestions[i];
+            return ListTile(
+              leading: query.isEmpty ? Icon(Icons.history) : SizedBox(width: 0),
+              // Highlight the substring that matched the query.
+              title: Text(query.isEmpty ? suggestion : suggestion['name']),
+              onTap: () {
+                onSelected(query.isEmpty ? suggestion : suggestion['name']);
+              },
+            );
+          }
         });
   }
 }

@@ -24,6 +24,7 @@ class StateModel extends ChangeNotifier {
   List<dynamic> _myPlayList = [];
   List<dynamic> _recommendPlayList = [];
   List<int> _likeList = [];
+  List<String> _searchHistory = [];
 
   StateModel() {
     // init player
@@ -43,6 +44,7 @@ class StateModel extends ChangeNotifier {
   List<dynamic> get myPlayList => this._myPlayList;
   List<dynamic> get recommendPlayList => this._recommendPlayList;
   List<int> get likeList => this._likeList;
+  List<String> get searchHistory => this._searchHistory;
 
   void setMyPlayList(List<dynamic> data) {
     this._myPlayList = data;
@@ -52,6 +54,25 @@ class StateModel extends ChangeNotifier {
     this._recommendPlayList = data;
     notifyListeners();
   }
+
+  void setSearchHistory (List<String> vals) async {
+    if (vals.isEmpty) {
+      this._searchHistory.clear();
+      final prefs = await SharedPreferences.getInstance();
+      prefs.remove('searchHistory');
+    } else {
+      this._searchHistory.addAll(vals);
+    }
+    notifyListeners();
+  }
+
+  void addSearchHistory (val) async {
+    this._searchHistory.insert(0, val);
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('searchHistory', this._searchHistory.join(';'));
+  }
+
 
   void setUserInfo(dynamic userInfo) async {
     final prefs = await SharedPreferences.getInstance();

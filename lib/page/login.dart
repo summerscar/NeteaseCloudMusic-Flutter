@@ -320,7 +320,7 @@ class _FilledButton extends StatelessWidget {
         ButtonState.loading:
           IconedButton(
               text: "Loading",
-              color: Colors.deepPurple.shade700),
+              color: Colors.red.shade700),
         ButtonState.fail:
           IconedButton(
               text: "Failed",

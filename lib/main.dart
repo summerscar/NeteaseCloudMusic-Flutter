@@ -45,6 +45,12 @@ class MyApp extends StatelessWidget {
       Provider.of<StateModel>(context, listen: false)
           .setUserInfo(jsonDecode(userInfo));
     }
+    String searchHistory = prefs.getString('searchHistory');
+    if (searchHistory != null) {
+      List<String> searchHistoryList = searchHistory.split(';');
+      Provider.of<StateModel>(context, listen: false)
+        .setSearchHistory(searchHistoryList);
+    }
   }
 
   @override
