@@ -22,9 +22,10 @@ web: [download](https://github.com/summerscar/NeteaseCloudMusic-Flutter/releases
 
 
 ## Todo
-* 搜索历史
+* ~~搜索历史~~
 * 私人电台
 * ~~歌单音乐删除~~
+* 歌手信息页
 * ......
 
 ## Support platform
