@@ -20,6 +20,8 @@ import './page/search.dart';
 import 'components/bottomPlayer.dart';
 import './page/explorer.dart';
 import 'package:move_to_background/move_to_background.dart';
+import './utils/api.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 void main() {
   EasyLoading.instance
@@ -44,6 +46,17 @@ class MyApp extends StatelessWidget {
     if (userInfo != null) {
       Provider.of<StateModel>(context, listen: false)
           .setUserInfo(jsonDecode(userInfo));
+
+      if (kIsWeb) {
+        return;
+      }
+      api().get('/user/playlist?uid=${jsonDecode(userInfo)['userId']}').then((res) {
+        if (res.data['code'] == 200) {
+          Provider.of<StateModel>(context, listen: false)
+          .setMyPlayList(res.data['playlist']);
+        }
+        // debugger();
+      });
     }
     String searchHistory = prefs.getString('searchHistory');
     if (searchHistory != null) {
