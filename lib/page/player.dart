@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import '../state/state.dart';
@@ -47,7 +49,12 @@ class _PlayerPageState extends State<StatefulWidget>
         state.setLikeList(islike, id);
       });
     }
-
+    void _getArtist (int id) {
+      api().get('/artist/desc?id=$id')
+      .then((res) {
+        print(res.data);
+      });
+    }
     void _addTolist() {
       showDialog<int>(
         context: context,
@@ -179,10 +186,19 @@ class _PlayerPageState extends State<StatefulWidget>
                                                                 .id))
                                                   })
                                         ])),
-                                Text(
-                                  state.currentSong.artistsList.join(' '),
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 13),
+                                Column(
+                                  children: state.currentSong.artists.map((artist) =>
+                                    InkWell(
+                                      onTap: () {
+                                        _getArtist(artist['id']);
+                                      },
+                                      child: Padding(padding: EdgeInsets.symmetric(horizontal: 10), child:Text(
+                                      artist['name'],
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 13),
+                                    ))
+                                    )
+                                  ).toList()
                                 )
                               ],
                             )),

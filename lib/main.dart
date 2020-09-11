@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
     if (searchHistory != null) {
       List<String> searchHistoryList = searchHistory.split(';');
       Provider.of<StateModel>(context, listen: false)
-        .setSearchHistory(searchHistoryList);
+          .setSearchHistory(searchHistoryList);
     }
   }
 
@@ -58,14 +58,17 @@ class MyApp extends StatelessWidget {
     _initState(context);
 
     return WillPopScope(
-      child: MaterialApp(routes: {
-        "login": (context) => FlutterEasyLoading(child: LoginPage()),
-        "/": (context) => FlutterEasyLoading(
-              child: MyHomePage(),
-            ),
-        "player": (context) => FlutterEasyLoading(child: PlayerPage()),
-      }, initialRoute: '/', theme: ThemeData(primarySwatch: Colors.red),
-        title: '网易云音乐-Flutter',
+      child: FlutterEasyLoading(
+        child: MaterialApp(
+          routes: {
+            "login": (context) => LoginPage(),
+            "/": (context) => MyHomePage(),
+            "player": (context) => PlayerPage(),
+          },
+          initialRoute: '/',
+          theme: ThemeData(primarySwatch: Colors.red),
+          title: '网易云音乐-Flutter',
+        )
       ),
       onWillPop: () async {
         MoveToBackground.moveTaskToBack();

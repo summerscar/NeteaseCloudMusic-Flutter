@@ -8,7 +8,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import '../utils/api.dart';
 import 'package:provider/provider.dart';
 import '../state/state.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:progress_state_button/progress_button.dart';
 import 'package:progress_state_button/iconed_button.dart';
@@ -131,7 +130,6 @@ class _MainView extends StatelessWidget {
         // print(userDetail);
         Provider.of<StateModel>(context, listen: false)
             .setUserInfo(userDetail.data['profile']);
-        EasyLoading.dismiss();
         Navigator.of(context).pushReplacementNamed('/');
       } else {
         setStatus(ButtonState.fail);
