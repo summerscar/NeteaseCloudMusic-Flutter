@@ -76,8 +76,20 @@ class _BuildMusicList extends StatelessWidget {
           physics: const AlwaysScrollableScrollPhysics(), // new,
           itemCount: items.length,
           itemBuilder: (BuildContext context, int index) {
-            return Dismissible(
-              direction: this.canDel ? DismissDirection.endToStart : null,
+            Widget listTile = ListTile(
+                title: Text(items[index]['name']),
+                subtitle: Text((items[index]['artists'] ?? items[index]['ar'])
+                    .map((artist) => artist['name'])
+                    .join(' / ')),
+                onTap: () => _clickHandler(items[index]),
+                trailing: IconButton(
+                    icon: Icon(Icons.add_circle_outline),
+                    onPressed: () => state.addSongOrigin(items[index])),
+              );
+
+            return this.canDel
+            ? Dismissible(
+              direction: DismissDirection.endToStart,
               key: new Key(items[index]['id'].toString()),
               background: new Container(
                 child: Padding(padding: EdgeInsets.only(right: 20),
@@ -97,17 +109,9 @@ class _BuildMusicList extends StatelessWidget {
                       new SnackBar(content: new Text("${items[index]['name']} 已移出列表")));
                 _removeFromList(items[index]['id']);
               },
-              child: ListTile(
-                title: Text(items[index]['name']),
-                subtitle: Text((items[index]['artists'] ?? items[index]['ar'])
-                    .map((artist) => artist['name'])
-                    .join(' / ')),
-                onTap: () => _clickHandler(items[index]),
-                trailing: IconButton(
-                    icon: Icon(Icons.add_circle_outline),
-                    onPressed: () => state.addSongOrigin(items[index])),
-              )
-            );
+              child: listTile
+            )
+            : listTile;
           },
           separatorBuilder: (BuildContext context, int index) {
             return Divider(color: Colors.grey);
