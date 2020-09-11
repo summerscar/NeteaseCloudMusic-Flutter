@@ -12,12 +12,20 @@ jobs:
     - uses: actions/setup-java@v1
       with:
         java-version: '12.x'
+    - run: echo $SIGNING_KEY | base64 -d > android/app/key.jks
+      env:
+        SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
     - uses: subosito/flutter-action@v1
       with:
         channel: beta
     - run: flutter config --enable-web
     - run: flutter pub get
-    - run: flutter build apk
+    - run: flutter build apk  --split-per-abi
+      env:
+        KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
+        KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        ALIAS: ${{ secrets.ALIAS }}
+        KEY_PATH: key.jks
     - run: flutter build web
     - run: zip -r web.zip ./build/web
 
