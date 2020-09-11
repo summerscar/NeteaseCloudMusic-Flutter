@@ -70,8 +70,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     _initState(context);
 
-    return WillPopScope(
-      child: FlutterEasyLoading(
+    return FlutterEasyLoading(
         child: MaterialApp(
           routes: {
             "login": (context) => LoginPage(),
@@ -82,12 +81,7 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(primarySwatch: Colors.red),
           title: '网易云音乐-Flutter',
         )
-      ),
-      onWillPop: () async {
-        MoveToBackground.moveTaskToBack();
-        return false;
-      },
-    );
+      );
   }
 }
 
@@ -110,7 +104,13 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
+    return WillPopScope(
+      onWillPop: () async {
+        print('move to ackground');
+        await MoveToBackground.moveTaskToBack();
+        return false;
+      },
+      child: DefaultTabController(
         length: tabs.length,
         child: Scaffold(
           drawer: ComponentDrawer(),
@@ -139,6 +139,7 @@ class MyHomePage extends StatelessWidget {
             ],
           ),
           bottomNavigationBar: BottonPlayer(),
-        ));
+        )),
+    );
   }
 }
