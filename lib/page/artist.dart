@@ -62,6 +62,7 @@ class _ArtistPageState extends State<ArtistPage> {
               ),
             ),
             Expanded(child: ListView.builder(
+              physics: const AlwaysScrollableScrollPhysics(), // new,
               itemCount: songList.length + 1,
               itemBuilder: (BuildContext context, int index) {
                 if (index == 0) {

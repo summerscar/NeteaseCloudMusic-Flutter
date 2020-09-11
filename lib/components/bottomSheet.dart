@@ -46,6 +46,7 @@ class BottomSheetComponent extends StatelessWidget {
               )),
           Expanded(
               child: ListView.builder(
+                  physics: const AlwaysScrollableScrollPhysics(), // new,
                   itemCount: state.songList.length,
                   itemBuilder: (BuildContext context, int index) {
                     return ListTile(

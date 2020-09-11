@@ -202,13 +202,14 @@ class StateModel extends ChangeNotifier {
 
       if (!playerInited) {
         this.player.open(this.playlist,
-            autoStart: false,
+            autoStart: true,
             loopMode: LoopMode.playlist,
             showNotification: true //loop the full playlist
             );
         this.playerInited = true;
+      } else {
+        this.player.playlistPlayAtIndex(this.currentIndex);
       }
-      this.player.playlistPlayAtIndex(this.currentIndex);
     } catch (e) {
       Fluttertoast.showToast(
           msg: "播放出错",

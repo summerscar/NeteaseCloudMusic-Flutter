@@ -140,6 +140,7 @@ class _SuggestionList extends StatelessWidget {
   Widget build(BuildContext context) {
     // final textTheme = Theme.of(context).textTheme.subtitle1;
     return ListView.builder(
+        physics: const AlwaysScrollableScrollPhysics(), // new,
         itemCount: query.isEmpty ? suggestions.length + 1 : suggestions.length,
         itemBuilder: (BuildContext context, int i) {
           dynamic suggestion;
