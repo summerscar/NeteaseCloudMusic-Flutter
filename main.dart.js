@@ -63555,19 +63555,20 @@ return s},
 $S:439}
 F.Gs.prototype={
 rK:function(a){return this.a_u(a)},
-a_u:function(a){var s=0,r=P.w(t.H),q,p,o,n
+a_u:function(a){var s=0,r=P.w(t.H),q,p,o,n,m
 var $async$rK=P.r(function(b,c){if(b===1)return P.t(c,r)
 while(true)switch(s){case 0:X.aoB(new X.k8(null,null,null,C.aL,null,null))
-s=2
+s=3
 return P.q(V.jZ(),$async$rK)
-case 2:q=c.a
-p=J.a5(q)
-o=p.h(q,"userInfo")
+case 3:p=c.a
+o=J.a5(p)
+n=o.h(p,"userInfo")
 P.bb("init state")
-if(o!=null)Y.d9(a,!1,t.Q).lH(C.aK.KU(0,o,null))
-q=p.h(q,"searchHistory")
-if(q!=null){n=H.b(q.split(";"),t.s)
-Y.d9(a,!1,t.Q).nR(n)}return P.u(null,r)}})
+if(n!=null){Y.d9(a,!1,t.Q).lH(C.aK.KU(0,n,null))
+s=1
+break}p=o.h(p,"searchHistory")
+if(p!=null){m=H.b(p.split(";"),t.s)
+Y.d9(a,!1,t.Q).nR(m)}case 1:return P.u(q,r)}})
 return P.v($async$rK,r)},
 D:function(a,b){var s=null
 this.rK(b)
