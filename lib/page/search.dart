@@ -58,6 +58,7 @@ class MySearchDelegate extends SearchDelegate<dynamic> {
         if (snapshot.hasData) {
           final post = snapshot.data;
           return ListView.separated(
+              physics: const AlwaysScrollableScrollPhysics(), // new,
               itemBuilder: (BuildContext context, int index) {
                 return ListTile(
                   title: Text(post[index]['name']),

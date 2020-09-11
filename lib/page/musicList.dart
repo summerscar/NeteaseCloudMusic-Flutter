@@ -73,6 +73,7 @@ class _BuildMusicList extends StatelessWidget {
         ),
         Expanded(
             child: ListView.separated(
+          physics: const AlwaysScrollableScrollPhysics(), // new,
           itemCount: items.length,
           itemBuilder: (BuildContext context, int index) {
             return Dismissible(
