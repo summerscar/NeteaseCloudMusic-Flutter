@@ -25,7 +25,7 @@ web: [download](https://github.com/summerscar/NeteaseCloudMusic-Flutter/releases
 * ~~搜索历史~~
 * 私人电台
 * ~~歌单音乐删除~~
-* 歌手信息页
+* ~~歌手信息页~~
 * ......
 
 ## Support platform
@@ -40,8 +40,8 @@ web: [download](https://github.com/summerscar/NeteaseCloudMusic-Flutter/releases
 ![](preview/00.jpg)
 ![](preview/01.jpg)
 ![](preview/02.jpg)
-![](preview/03.jpg)
 ![](preview/04.jpg)
+![](preview/05.png)
 
 ## Reference
 * [gallery](https://github.com/flutter/gallery)
