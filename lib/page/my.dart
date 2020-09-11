@@ -66,7 +66,9 @@ class _PageMyState extends State<PageMy> {
       child: Column(
         children: [
           state.myPlayList.isEmpty
-              ? Container(
+              ?  state.userInfo != null
+              ? Container(padding: EdgeInsetsDirectional.only(top: 200), child: CircularProgressIndicator(),)
+              : Container(
                   padding: EdgeInsets.only(top: 40),
                   child: Center(
                     child: RaisedButton(

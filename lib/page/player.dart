@@ -191,7 +191,8 @@ class _PlayerPageState extends State<StatefulWidget>
                                                                 .id))
                                                   })
                                         ])),
-                                Column(
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: state.currentSong.artists.map((artist) =>
                                     InkWell(
                                       onTap: () {

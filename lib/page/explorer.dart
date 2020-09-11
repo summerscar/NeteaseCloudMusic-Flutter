@@ -228,38 +228,3 @@ class _ExplorerPageState extends State<ExplorerPage> {
     );
   }
 }
-
-class _MusicList extends StatelessWidget {
-  void getHttp(BuildContext context) async {
-    List<dynamic> list;
-
-    EasyLoading.show();
-    try {
-      Response response = await api().get("/top/song?type=8");
-      list = response.data['data'];
-
-      EasyLoading.dismiss();
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) {
-            return MusicListPage(
-              list: list,
-              title: '最新歌曲',
-            );
-          },
-        ),
-      );
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return RaisedButton(
-      child: Text('最新歌曲'),
-      onPressed: () => getHttp(context),
-    );
-  }
-}
