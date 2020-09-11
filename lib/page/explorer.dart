@@ -207,23 +207,7 @@ class _ExplorerPageState extends State<ExplorerPage> {
                   .toList()
             ],
           ),
-        ),
-        // _MusicList(),
-        // RaisedButton(
-        //   onPressed: () async {
-        //     print('clicked');
-        //     EasyLoading.show();
-        //     try {
-        //       Response response = await api().get("/login/status");
-        //       print('status ok');
-        //       print(response);
-        //     } catch (e) {
-        //       print(e);
-        //     }
-        //     EasyLoading.dismiss();
-        //   },
-        //   child: Text('status'),
-        // ),
+        )
       ]),
     );
   }
