@@ -1,7 +1,6 @@
-import 'dart:html';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import '../state/state.dart';
 import 'package:provider/provider.dart';
 import 'dart:ui';
@@ -11,6 +10,7 @@ import 'package:flutter_lyric/lyric_widget.dart';
 import '../components/bottomSheet.dart';
 import '../utils//api.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import '../page/artist.dart';
 
 class PlayerPage extends StatefulWidget {
   @override
@@ -49,10 +49,15 @@ class _PlayerPageState extends State<StatefulWidget>
         state.setLikeList(islike, id);
       });
     }
-    void _getArtist (int id) {
+    void _getArtist (int id, String name) {
+      EasyLoading.show();
       api().get('/artist/desc?id=$id')
       .then((res) {
-        print(res.data);
+        EasyLoading.dismiss();
+        Navigator.push(
+          context,
+          new MaterialPageRoute(builder: (context) => ArtistPage(name, id, res.data['briefDesc'])),
+      );
       });
     }
     void _addTolist() {
@@ -190,7 +195,7 @@ class _PlayerPageState extends State<StatefulWidget>
                                   children: state.currentSong.artists.map((artist) =>
                                     InkWell(
                                       onTap: () {
-                                        _getArtist(artist['id']);
+                                        _getArtist(artist['id'], artist['name']);
                                       },
                                       child: Padding(padding: EdgeInsets.symmetric(horizontal: 10), child:Text(
                                       artist['name'],

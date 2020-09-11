@@ -63,7 +63,7 @@ class MyApp extends StatelessWidget {
           routes: {
             "login": (context) => LoginPage(),
             "/": (context) => MyHomePage(),
-            "player": (context) => PlayerPage(),
+            "player": (context) => PlayerPage()
           },
           initialRoute: '/',
           theme: ThemeData(primarySwatch: Colors.red),
