@@ -128,7 +128,7 @@ class _ExplorerPageState extends State<ExplorerPage> {
                     if (state.userInfo != null) {
                       _getRecommendSongs();
                     } else {
-                      Navigator.pushNamed(context, '/');
+                      Navigator.pushNamed(context, 'login');
                     }
                   },
                   child: Container(
@@ -207,7 +207,13 @@ class _ExplorerPageState extends State<ExplorerPage> {
                   .toList()
             ],
           ),
-        )
+        ),
+        state.recommendPlayList.isEmpty && state.userInfo != null
+            ? Container(
+                padding: EdgeInsetsDirectional.only(top: 150),
+                child: CircularProgressIndicator(),
+              )
+            : SizedBox()
       ]),
     );
   }
