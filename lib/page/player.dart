@@ -66,14 +66,13 @@ class _PlayerPageState extends State<StatefulWidget>
         builder: (BuildContext context) => SimpleDialog(
           title: Text('收藏到歌单'),
           children: state.myPlayList
-              .where((list) => list['subscribed'] == false)
+              .where((list) => list.subscribed == false)
               .map((list) => ListTile(
                     leading: CircleAvatar(
-                      backgroundImage: CachedNetworkImageProvider(list[
-                          'coverImgUrl']), // no matter how big it is, it won't overflow
+                      backgroundImage: CachedNetworkImageProvider(list.coverImgUrl), // no matter how big it is, it won't overflow
                     ),
-                    title: Text(list['name']),
-                    onTap: () => Navigator.pop(context, list['id']),
+                    title: Text(list.name),
+                    onTap: () => Navigator.pop(context, list.id),
                   ))
               .toList(),
         ),

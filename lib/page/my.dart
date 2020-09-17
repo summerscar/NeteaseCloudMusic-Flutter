@@ -40,11 +40,11 @@ class _PageMyState extends State<PageMy> {
   Widget build(BuildContext context) {
     StateModel state = context.watch<StateModel>();
 
-    void _musicListClickHandler(dynamic musiclist) async {
-      print('${musiclist['name']} ${musiclist['id']}');
+    void _musicListClickHandler(PlayList musiclist) async {
+      print('${musiclist.name} ${musiclist.id}');
 
       EasyLoading.show();
-      Response res = await api().get('/playlist/detail?id=${musiclist['id']}');
+      Response res = await api().get('/playlist/detail?id=${musiclist.id}');
       List<dynamic> tracks = res.data['playlist']['tracks'];
       EasyLoading.dismiss();
       Navigator.push(
@@ -53,9 +53,9 @@ class _PageMyState extends State<PageMy> {
           builder: (context) {
             return MusicListPage(
               list: tracks,
-              title: musiclist['name'],
-              id: musiclist['id'],
-              canDel: !musiclist['subscribed'],
+              title: musiclist.name,
+              id: musiclist.id,
+              canDel: !musiclist.subscribed,
             );
           },
         ),
@@ -88,7 +88,7 @@ class _PageMyState extends State<PageMy> {
                         padding: const EdgeInsets.only(right: 1),
                         child: AspectRatio(
                           aspectRatio: 1.0,
-                          child: InkWell(
+                          child: GestureDetector(
                               onTap: () {
                                 _musicListClickHandler(state.myPlayList[0]);
                               },
@@ -97,7 +97,7 @@ class _PageMyState extends State<PageMy> {
                                 decoration: BoxDecoration(
                                   image: DecorationImage(
                                     image: CachedNetworkImageProvider(
-                                        state.myPlayList[0]['coverImgUrl']),
+                                        state.myPlayList[0].coverImgUrl),
                                     fit: BoxFit.cover,
                                   ),
                                 ),
@@ -127,7 +127,7 @@ class _PageMyState extends State<PageMy> {
                                     itemCount:
                                         state.myPlayList.getRange(1, 5).length,
                                     itemBuilder: (context, index) {
-                                      return InkWell(
+                                      return GestureDetector(
                                           onTap: () {
                                             _musicListClickHandler(state
                                                 .myPlayList
@@ -142,15 +142,11 @@ class _PageMyState extends State<PageMy> {
                                                           state.myPlayList
                                                                   .getRange(1, 5)
                                                                   .elementAt(
-                                                                      index)[
-                                                              'coverImgUrl']),
+                                                                      index).coverImgUrl),
                                                   fit: BoxFit.cover,
                                                 ),
                                               ),
-                                              child: BackdropFilter(
-                                                  filter: ImageFilter.blur(
-                                                      sigmaX: 0, sigmaY: 0),
-                                                  child: Container(
+                                              child: Container(
                                                     alignment:
                                                         Alignment.bottomLeft,
                                                     color: Colors.black
@@ -162,7 +158,7 @@ class _PageMyState extends State<PageMy> {
                                                         state.myPlayList
                                                             .getRange(1, 5)
                                                             .elementAt(
-                                                                index)['name'],
+                                                                index).name,
                                                         maxLines: 1,
                                                         overflow: TextOverflow
                                                             .ellipsis,
@@ -172,7 +168,7 @@ class _PageMyState extends State<PageMy> {
                                                                     0.8)),
                                                       ),
                                                     ),
-                                                  ))));
+                                                  )));
                                     },
                                   )
                                 : SizedBox(),
@@ -201,7 +197,7 @@ class _PageMyState extends State<PageMy> {
                         .getRange(5, state.myPlayList.length)
                         .length,
                     itemBuilder: (context, index) {
-                      return InkWell(
+                      return GestureDetector(
                           onTap: () {
                             _musicListClickHandler(state.myPlayList
                                 .getRange(5, state.myPlayList.length)
@@ -210,17 +206,11 @@ class _PageMyState extends State<PageMy> {
                           child: Container(
                               decoration: BoxDecoration(
                                 image: DecorationImage(
-                                  image: CachedNetworkImageProvider(state
-                                      .myPlayList
-                                      .getRange(5, state.myPlayList.length)
-                                      .elementAt(index)['coverImgUrl']),
+                                  image: AssetImage('assets/images/musiclist.jpg'),
                                   fit: BoxFit.cover,
                                 ),
                               ),
-                              child: BackdropFilter(
-                                  filter:
-                                      ImageFilter.blur(sigmaX: 0, sigmaY: 0),
-                                  child: Container(
+                              child: Container(
                                     alignment: Alignment.bottomLeft,
                                     color: Colors.black.withOpacity(0.4),
                                     child: Padding(
@@ -230,7 +220,7 @@ class _PageMyState extends State<PageMy> {
                                         state.myPlayList
                                             .getRange(
                                                 5, state.myPlayList.length)
-                                            .elementAt(index)['name'],
+                                            .elementAt(index).name,
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
@@ -238,7 +228,7 @@ class _PageMyState extends State<PageMy> {
                                                 Colors.white.withOpacity(0.8)),
                                       ),
                                     ),
-                                  ))));
+                                  )));
                     },
                   ),
                 )

@@ -123,7 +123,7 @@ class _ExplorerPageState extends State<ExplorerPage> {
               crossAxisSpacing: 3.0,
             ),
             children: [
-              InkWell(
+              GestureDetector(
                   onTap: () {
                     if (state.userInfo != null) {
                       _getRecommendSongs();
@@ -154,7 +154,7 @@ class _ExplorerPageState extends State<ExplorerPage> {
                       )))
                     ]),
                   )),
-              InkWell(
+              GestureDetector(
                   onTap: () {
                     _getTopMusic(0, '全站飙升榜');
                   },
@@ -165,7 +165,7 @@ class _ExplorerPageState extends State<ExplorerPage> {
                       fit: BoxFit.cover,
                     )),
                   )),
-              InkWell(
+              GestureDetector(
                   onTap: () {
                     _getTopMusic(8, '日语榜');
                   },
@@ -176,7 +176,7 @@ class _ExplorerPageState extends State<ExplorerPage> {
                             fit: BoxFit.cover)),
                   )),
               ...state.recommendPlayList
-                  .map((playList) => InkWell(
+                  .map((playList) => GestureDetector(
                       onTap: () {
                         _musicListClickHandler(playList);
                       },
@@ -184,26 +184,24 @@ class _ExplorerPageState extends State<ExplorerPage> {
                           decoration: BoxDecoration(
                             image: DecorationImage(
                               image: CachedNetworkImageProvider(
-                                  playList['picUrl']),
+                                  playList.picUrl),
                               fit: BoxFit.cover,
                             ),
                           ),
-                          child: BackdropFilter(
-                              filter: ImageFilter.blur(sigmaX: 0, sigmaY: 0),
-                              child: Container(
+                          child: Container(
                                 alignment: Alignment.bottomLeft,
                                 color: Colors.black.withOpacity(0.4),
                                 child: Padding(
                                   padding: EdgeInsets.only(bottom: 6, left: 5),
                                   child: Text(
-                                    playList['name'],
+                                    playList.name,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
                                         color: Colors.white.withOpacity(0.8)),
                                   ),
                                 ),
-                              )))))
+                              ))))
                   .toList()
             ],
           ),

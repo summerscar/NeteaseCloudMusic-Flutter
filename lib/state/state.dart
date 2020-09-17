@@ -21,8 +21,8 @@ class StateModel extends ChangeNotifier {
   String _currentLyric;
   Playlist _playlist = Playlist(audios: []);
   bool playerInited;
-  List<dynamic> _myPlayList = [];
-  List<dynamic> _recommendPlayList = [];
+  List<PlayList> _myPlayList = [];
+  List<PlayList> _recommendPlayList = [];
   List<int> _likeList = [];
   List<String> _searchHistory = [];
 
@@ -41,17 +41,17 @@ class StateModel extends ChangeNotifier {
   LoopMode get playMode => this._playMode;
   String get currentLyric => this._currentLyric;
   Playlist get playlist => this._playlist;
-  List<dynamic> get myPlayList => this._myPlayList;
-  List<dynamic> get recommendPlayList => this._recommendPlayList;
+  List<PlayList> get myPlayList => this._myPlayList;
+  List<PlayList> get recommendPlayList => this._recommendPlayList;
   List<int> get likeList => this._likeList;
   List<String> get searchHistory => this._searchHistory;
 
   void setMyPlayList(List<dynamic> data) {
-    this._myPlayList = data;
+    this._myPlayList = data.map((playlist) => PlayList(playlist)).toList();
     notifyListeners();
   }
   void setRecommendPlayList(List<dynamic> data) {
-    this._recommendPlayList = data;
+    this._recommendPlayList = data.map((playlist) => PlayList(playlist)).toList();
     notifyListeners();
   }
 
@@ -339,5 +339,21 @@ class StateModel extends ChangeNotifier {
       return rnd.nextInt(songList.length);
     }
     return 0;
+  }
+}
+
+
+class PlayList {
+  int id;
+  String coverImgUrl;
+  String name;
+  bool subscribed;
+  String picUrl;
+  PlayList (dynamic playlist) {
+    this.id = playlist['id'];
+    this.coverImgUrl = playlist['coverImgUrl'] ?? '';
+    this.name = playlist['name'];
+    this.subscribed = playlist['subscribed'] ?? false;
+    this.picUrl = playlist['picUrl'] ?? '';
   }
 }
