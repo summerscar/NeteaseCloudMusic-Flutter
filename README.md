@@ -26,6 +26,9 @@ web: [download](https://github.com/summerscar/NeteaseCloudMusic-Flutter/releases
 * 私人电台
 * ~~歌单音乐删除~~
 * ~~歌手信息页~~
+* 性能优化
+
+    Container DecorationImage 使用网络图片会爆内存,导致严重的性能问题，原因未知
 * ......
 
 ## Support platform
