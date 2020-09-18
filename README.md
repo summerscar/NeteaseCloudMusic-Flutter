@@ -1,5 +1,8 @@
 # 网易云音乐 Flutter
 
+![pre-release](https://github.com/summerscar/NeteaseCloudMusic-Flutter/workflows/pre-release/badge.svg)
+![release](https://github.com/summerscar/NeteaseCloudMusic-Flutter/workflows/release/badge.svg)
+
 https://summerscar.me/NeteaseCloudMusic-Flutter/
 
 ## Download
