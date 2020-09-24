@@ -62,6 +62,14 @@ class _ExplorerPageState extends State<ExplorerPage> {
       );
     }
 
+    void _getUserFM () {
+      api().get('/personal_fm')
+      .then((res) => print(res.data))
+      .catchError((e) {
+        print(e);
+      });
+    }
+
     void _getRecommendSongs() {
       EasyLoading.show();
       api().get('/recommend/songs').then((value) {
@@ -174,7 +182,34 @@ class _ExplorerPageState extends State<ExplorerPage> {
                         image: DecorationImage(
                             image: AssetImage('assets/images/top-jp.jpg'),
                             fit: BoxFit.cover)),
-                  )),
+                )),
+                ...(state.userInfo == null ? [] : [
+                GestureDetector(
+                onTap: () {
+                  _getUserFM();
+                },
+                child: Container(
+                  child:
+                  Container(
+                    alignment: Alignment.center,
+                    color: Colors.black.withOpacity(0.3),
+                    child: Text(
+                      '私人电台',
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.white70,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      ),
+                    ),
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/images/musiclist.jpg'),
+                      fit: BoxFit.cover,
+                    )
+                  )
+                )
+              )]),
               ...state.recommendPlayList
                   .map((playList) => GestureDetector(
                       onTap: () {
